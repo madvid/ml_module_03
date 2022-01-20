@@ -7,6 +7,10 @@ path = os.path.join(os.path.dirname(__file__), '..', 'ex03')
 sys.path.insert(1, path)
 from gradient import gradient
 
+## Collecting the path where prediction method is
+path = os.path.join(os.path.dirname(__file__), '..', 'utils')
+sys.path.insert(1, path)
+from prediction import predict_
 
 def fit_(x, y, theta, alpha, max_iter):
     """
@@ -36,9 +40,8 @@ def fit_(x, y, theta, alpha, max_iter):
                 or (not isinstance(theta, np.ndarray)):
             return None
         ## Checking the shape of x, y and theta
-        if (x.shape[1] != 1) \
-            or (y.shape[1] != 1) \
-                or (x.shape[0] != y.shape[0]) \
+        if (y.shape[1] != 1) \
+            or (x.shape[0] != y.shape[0]) \
                 or (theta.shape[0] != x.shape[1] + 1):
             return None
         ## Checking the type and values of max_iter and alpha
@@ -51,8 +54,7 @@ def fit_(x, y, theta, alpha, max_iter):
         new_theta = np.copy(theta.astype('float64'))
         for _ in range(max_iter):
             grad = gradient(x, y, new_theta)
-            new_theta[0] = new_theta[0] - alpha * grad[0]
-            new_theta[1] = new_theta[1] - alpha * grad[1]
+            new_theta = new_theta - alpha * grad
         return new_theta
     except:
         ## If something unexpected happened, we juste leave
@@ -63,12 +65,17 @@ if __name__ == "__main__":
     x = np.array([[0.2, 2., 20.], [0.4, 4., 40.], [0.6, 6., 60.], [0.8, 8., 80.]])
     y = np.array([[19.6], [-2.8], [-25.2], [-47.6]])
     theta = np.array([[42.], [1.], [1.], [1.]])
-    # Example 0:
-    theta2 = fit_(X2, Y2, theta2, alpha = 0.0005, max_iter=42000)
-    theta2
+    print("# Example 0:")
+    nw_theta = fit_(x, y, theta, alpha = 0.0005, max_iter=42000)
     # Output:
-    expected_theta = np.array([[41.99..],[0.97..], [0.77..], [-1.20..]])
-    # Example 1:
-    predict_(X2, theta2)
+    # expected_theta = np.array([[41.99..],[0.97..], [0.77..], [-1.20..]])
+    print("initial value of theta:\n", theta)
+    print("After training value of theta:\n", nw_theta)
+
+    print("\n# Example 1:")
+    pred = predict_(x, nw_theta)
     # Output:
-    expected_theta = np.array([[19.5992..], [-2.8003..], [-25.1999..], [-47.5996..]]
+    # np.array([[19.5992..], [-2.8003..], [-25.1999..], [-47.5996..]])
+    expected_pred = np.array([[19.5992], [-2.8003], [-25.1999], [-47.5996]])
+    print("my prediction:", pred.reshape(1,-1))
+    print("expected prediction:", expected_pred.reshape(1,-1))
