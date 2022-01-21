@@ -1,7 +1,7 @@
 from __future__ import annotations
 import numpy as np
 from math import sqrt
-
+import sys
 
 class Metrics():
 
@@ -198,10 +198,10 @@ class MyLinearRegression(Metrics):
                 self.thetas = self.thetas - self.alpha * grad
         except:
             # If something unexpected happened, we juste leave
+            print("Something wrong during fit.")
             return None
 
-    @staticmethod
-    def loss_elem_(y, y_hat):
+    def loss_elem_(self, x, y):
         """
         Description:
         Calculates all the elements (y_pred - y)^2 of the loss function.
@@ -217,13 +217,91 @@ class MyLinearRegression(Metrics):
         This function should not raise any Exception.
         """
         try:
+            ## Checking y and y_hat are numpy array
+            if (not isinstance(x, np.ndarray)) \
+                or (not isinstance(y, np.ndarray)):
+                    return None
+
+            ## Checking the shape of y and y_hat
+            if (x.shape[1] + 1 != self.thetas.shape[0]) \
+                or (y.shape[1] != 1) \
+                    or (x.shape[0] != y.shape[0]):
+                return None
+            
+            res = (self.predict_(x) - y) ** 2
+            return res
+        except:
+            None
+
+
+    def loss_(self, x, y):
+        """Computes the half mean squared error of two non-empty numpy.array,
+        without any for loop. The two arrays must have the same dimensions.
+        Args:
+            y: has to be an numpy.array, a vector.
+            y_hat: has to be an numpy.array, a vector.
+        Returns:
+            The half mean squared error of the two vectors as a float.
+            None if y or y_hat are empty numpy.array.
+            None if y and y_hat does not share the same dimensions.
+            None if y or y_hat is not of the expected type.
+        Raises:
+            This function should not raise any Exception.
+        """
+        try:
+            ## Checking y and y_hat are numpy array
+            if (not isinstance(x, np.ndarray)) \
+                or (not isinstance(y, np.ndarray)):
+                    return None
+
+            ## Checking the shape of y and y_hat
+            if (x.shape[1] + 1 != self.thetas.shape[0]) \
+                or (y.shape[1] != 1) \
+                    or (x.shape[0] != y.shape[0]):
+                return None
+            
+            #loss = MyLinearRegression.CLS_loss_fct(y, y_hat)
+            loss = (self.predict_(x) - y).T @ (self.predict_(x) - y)
+            return float(loss) / (2.0 * y.shape[0])
+        except:
+            None
+
+
+    @staticmethod
+    def _loss_elem_(y, y_hat):
+        """
+        Description:
+        Calculates all the elements (y_pred - y)^2 of the loss function.
+        Args:
+        y: has to be an numpy.array, a vector.
+        y_hat: has to be an numpy.array, a vector.
+        Returns:
+        J_elem: numpy.array, a vector of dimension
+                (number of the training examples,1).
+        None if there is a dimension matching problem between y and y_hat.
+        None if y or y_hat is not of the expected type.
+        Raises:
+        This function should not raise any Exception.
+        """
+        try:
+            ## Checking y and y_hat are numpy array
+            if (not isinstance(y, np.ndarray)) \
+                or (not isinstance(y_hat, np.ndarray)):
+                    return None
+
+            ## Checking the shape of y and y_hat
+            if (y.shape[1] != 1) \
+                or (y_hat.shape[1] != 1) \
+                    or (y_hat.shape[0] != y.shape[0]):
+                return None
+            
             res = (y - y_hat) ** 2
             return res
         except:
             None
 
     @staticmethod
-    def loss_(y, y_hat):
+    def _loss_(y, y_hat):
         """Computes the half mean squared error of two non-empty numpy.array,
         without any for loop. The two arrays must have the same dimensions.
         Args:
@@ -277,49 +355,59 @@ if __name__ == "__main__":
     X = np.array([[1., 1., 2., 3.], [5., 8., 13., 21.], [34., 55., 89., 144.]])
     Y = np.array([[23.], [48.], [218.]])
     mylr = MyLinearRegression([[1.], [1.], [1.], [1.], [1]])
-    
+
     print("# Example 0:")
     pred = mylr.predict_(X)
     # Output:
     expected_pred = np.array([[8.], [48.], [323.]])
-    print("my prediction:\n", pred.reshape(1, -1))
-    print("expected prediction:\n", pred.reshape(1, -1))
+    print("my prediction:".ljust(20), pred.reshape(1, -1))
+    print("expected prediction:".ljust(20), pred.reshape(1, -1))
+
 
     print("\n# Example 1:")
     loss_e = mylr.loss_elem_(X,Y)
     # Output:
     expected_loss_e = np.array([[225.], [0.], [11025.]])
-    print("my loss elem:\n", loss_e.reshape(1, -1))
-    print("expected loss elem:\n", expected_loss_e.reshape(1, -1))
-    
+    print("my loss elem:".ljust(20), loss_e.reshape(1, -1))
+    print("expected loss elem:".ljust(20), expected_loss_e.reshape(1, -1))
+
+
     print("\n# Example 2:")
     loss = mylr.loss_(X,Y)
     # Output:
     expected_loss = 1875.0
-    print("my loss:\n", loss.reshape(1, -1))
-    print("expected loss:\n", expected_loss.reshape(1, -1))
-    
+    print("my loss:".ljust(15), loss)
+    print("expected loss:".ljust(15), expected_loss)
+
+
     print("\n# Example 3:")
     mylr.alpha = 1.6e-4
     mylr.max_iter = 200000
     mylr.fit_(X, Y)
     # Output:
     expected_thetas = np.array([[18.188], [2.767], [-0.374], [1.392], [0.017]])
-    print("my theta after training:\n".ljuet(30), mylr.thetas.reshape(1, -1))
-    print("expected theta after training:\n".ljuet(30), expected_thetas.reshape(1, -1))
+    print("my theta after training:\n", mylr.thetas.reshape(1, -1))
+    print("expected theta after training:\n", expected_thetas.reshape(1, -1))
 
 
     print("\n# Example 4:")
-    mylr.predict_(X)
+    pred = mylr.predict_(X)
     # Output:
-    #array([[23.417..], [47.489..], [218.065...]])
-    
+    expected_pred = np.array([[23.417], [47.489], [218.065]])
+    print("my prediction:\n", pred.reshape(1, -1))
+    print("expected prediction:\n", expected_pred.reshape(1, -1))
+
+
     print("\n# Example 5:")
-    mylr.loss_elem_(X,Y)
+    loss_e = mylr.loss_elem_(X,Y)
     # Output:
-    #array([[0.174..], [0.260..], [0.004..]])
-    
+    expected_loss_e = np.array([[0.174], [0.260], [0.004]])
+    print("my loss elem:\n", loss_e.reshape(1, -1))
+    print("expected loss elem:\n", expected_loss_e.reshape(1, -1))
+
     print("\n# Example 6:")
-    mylr.loss_(X,Y)
+    loss = mylr.loss_(X,Y)
     # Output:
-    #0.0732
+    expected_loss = 0.0732
+    print("my loss:".ljust(15), loss)
+    print("expected loss:".ljust(15), expected_loss)

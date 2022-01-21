@@ -39,17 +39,21 @@ def fit_(x, y, theta, alpha, max_iter):
             or (not isinstance(y, np.ndarray)) \
                 or (not isinstance(theta, np.ndarray)):
             return None
+
         ## Checking the shape of x, y and theta
         if (y.shape[1] != 1) \
             or (x.shape[0] != y.shape[0]) \
+                or (theta.shape[1] != 1) \
                 or (theta.shape[0] != x.shape[1] + 1):
             return None
+
         ## Checking the type and values of max_iter and alpha
         if (not isinstance(max_iter, int)) \
             or (max_iter < 0) \
                 or (not isinstance(alpha, float)) \
                 or (alpha >= 1 or alpha <= 0):
             return None
+
         ## Casting theta to float, in case it is integer
         new_theta = np.copy(theta.astype('float64'))
         for _ in range(max_iter):

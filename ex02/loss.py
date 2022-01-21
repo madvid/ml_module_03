@@ -15,6 +15,16 @@ def loss_(y, y_hat):
         This function should not raise any Exception.
     """
     try:
+        ## Checking y and y_hat are numpy array
+        if (not isinstance(y, np.ndarray)) \
+            or (not isinstance(y_hat, np.ndarray)):
+                return None
+        
+        ## Checking the shape of y and y_hat
+        if (y.shape[1] != 1) \
+            or (y_hat.shape[1] != 1) \
+                or (y_hat.shape[0] != y.shape[0]):
+                    return None
         loss = (y - y_hat).T @ (y - y_hat) / (2.0 * y.shape[0])
         return float(loss)
     except:

@@ -9,16 +9,17 @@ from prediction import predict_
 
 def gradient(x, y, theta):
     """Computes a gradient vector from three non-empty numpy.array,
-    without any for-loop. The three arrays must have compatible shapes.
+    without any for-loop. The three arrays must have the compatible shapes.
     Args:
-        x: has to be an numpy.array, a vector of shape m * 1.
+        x: has to be an numpy.array, a matrix of shape m * n.
         y: has to be an numpy.array, a vector of shape m * 1.
-        theta: has to be an numpy.array, a 2 * 1 vector.
+        theta: has to be an numpy.array, a vector (n +1) * 1.
     Return:
-        The gradient as a numpy.array, a vector of shape 2 * 1.
+        The gradient as a numpy.array, a vector of shapes n * 1,
+          containg the result of the formula for all j.
         None if x, y, or theta are empty numpy.array.
         None if x, y and theta do not have compatible shapes.
-        None if x, y or theta is not of the expected type.
+        None if x, y or theta is not of expected type.
     Raises:
         This function should not raise any Exception.
     """
@@ -32,10 +33,11 @@ def gradient(x, y, theta):
         # Testing the shape of the paramters.
         if (y.shape[1] != 1) \
             or (theta.shape[1] != 1) \
-                or (x.shape[0] != y.shape[0]):
+                or (x.shape[0] != y.shape[0]) \
+                or ((x.shape[1] + 1) != theta.shape[0]):
             return None
-        m, grad = x.shape[0], np.zeros(theta.shape)
 
+        m, grad = x.shape[0], np.zeros(theta.shape)
         xp = np.hstack((np.ones((m, 1)), x))
         grad = xp.T @ (xp @ theta - y)
 
