@@ -24,7 +24,7 @@ def plot(x, y, y_hat, title, b_legend = True,
         axes.scatter(x, y, label = data_labels['raw'], c=colors['raw'])
         axes.scatter(x, y_hat, label = data_labels['prediction'], c=colors['prediction'])
         plt.legend()
-        plt.set_title(title)
+        axes.set_title(title)
         plt.xlabel(axes_labels[0])
         plt.ylabel(axes_labels[1])
         if b_legend:
