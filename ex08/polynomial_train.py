@@ -3,6 +3,8 @@ import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib as mpl
+mpl.use('Qt5Agg')
 
 path = os.path.join(os.path.dirname(__file__), '..', 'ex05')
 sys.path.insert(1, path)
@@ -45,12 +47,13 @@ if __name__ == "__main__":
     theta5 = np.array([1140., -1850., 1110., -305., 40., -2.]).reshape(-1,1)
     theta6 = np.array([9110., -18015., 13400., -4935., 966., -96.4, 3.86]).reshape(-1,1)
     
-    mylr1 = MyLR(np.random.rand(2, 1), alpha=1e-3, max_iter=100000)
-    mylr2 = MyLR(np.random.rand(3, 1), alpha=1e-3, max_iter=100000)
-    mylr3 = MyLR(np.random.rand(4, 1), alpha=2.5e-5, max_iter=500000)
-    mylr4 = MyLR(theta4, alpha=1e-6, max_iter=100000)
-    mylr5 = MyLR(theta5, alpha=4e-8, max_iter=100000)
-    mylr6 = MyLR(theta6, alpha=1e-9, max_iter=500000)
+    np.random.seed = 42
+    mylr1 = MyLR(np.random.rand(2, 1), alpha=1e-3, max_iter=1000000)
+    mylr2 = MyLR(np.random.rand(3, 1), alpha=1e-3, max_iter=1000000)
+    mylr3 = MyLR(np.random.rand(4, 1), alpha=6e-5, max_iter=5000000)
+    mylr4 = MyLR(theta4, alpha=1e-6, max_iter=1000000)
+    mylr5 = MyLR(theta5, alpha=4e-8, max_iter=1000000)
+    mylr6 = MyLR(theta6, alpha=1e-9, max_iter=5000000)
     
     print("starting training model #1")
     mylr1.fit_(x1, target)
