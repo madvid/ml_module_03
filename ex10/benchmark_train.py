@@ -1,3 +1,7 @@
+# ######################################################### #
+#                    LIBRARIES IMPORT                       #
+# ######################################################### #
+
 import os
 import sys
 import numpy as np
@@ -9,7 +13,7 @@ from data_spliter import data_spliter
 
 path = os.path.join(os.path.dirname(__file__), '..', 'ex05')
 sys.path.insert(1, path)
-from mylinearregression import MyLinearRegression
+from mylinearregression import MyLinearRegression as MyLR
 
 path = os.path.join(os.path.dirname(__file__), '..', 'ex07')
 sys.path.insert(1, path)
@@ -20,8 +24,50 @@ sys.path.insert(1, path)
 from scaler import MyStandardScaler
 
 
+# ######################################################### #
+#                        CONSTANTES                         #
+# ######################################################### #
+
 lst_check_feat = ["weight", "prod_distance", "time_delivery"]
 lst_dataset = lst_check_feat + ["target"]
+
+col2idx = {'w': 0,
+           'p': 1,
+           't': 2,
+           'w2': 3,
+           'p2': 5,
+           't2': 6,
+           'w3': 7,
+           'p3': 8,
+           't3': 9,
+           'w4': 10,
+           'p4': 11,
+           't4': 12,
+           'wp': 13,
+           'w2p': 14,
+           'wp2': 15,
+           'w2p2': 16,
+           'wt': 17,
+           'w2t': 18,
+           'wt2': 19,
+           'w2t2': 20,
+           'p2t': 21,
+           'pt2': 22,
+           'p2t2': 23}
+
+# ######################################################### #
+#                  FUNCTION DEFINITIONS                     #
+# ######################################################### #
+
+def data_idx(cols):
+    lst = []
+    for c in cols:
+        lst.append(col2idx[c])
+    return np.array(lst, dtype=int)
+
+# ######################################################### #
+#                             MAIN                          #
+# ######################################################### #
 
 if __name__ == "__main__":
     # Importation of the dataset + basic checking:
@@ -30,7 +76,6 @@ if __name__ == "__main__":
     except:
         print("Issue when trying to retrieve the dataset.", file=sys.stderr)
         sys.exit()
-
     
     if any([not c in lst_dataset for c in data.columns]):
         print("At least a missing expected columns.", file=sys.stderr)
@@ -99,16 +144,81 @@ if __name__ == "__main__":
     #                            First Bath of models                        #
     # ###################################################################### #
     # Simple models:
+    lr_w = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
+    lr_p = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
+    lr_t = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
     
-    x_train_tr[:, 0] # x_train['w']
-    x_train_tr[:, 1] # x_train['p']
-    x_train_tr[:, 2] # x_train['t']
+    lr_wp = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
+    lr_wt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
+    lr_pt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
+    
+    lr_wpt = MyLR(np.random.rand(4,1), alpha=1e-2, max_iter=5000)
+    
+    simple_models = [lr_w, lr_p, lr_t, lr_wp, lr_wt, lr_pt, lr_wpt]
+    lst_vars = [['w'], ['p'], ['t'], ['w', 'p'], ['w', 't'], ['p', 't'], ['w', 'p', 't']]
+    
+    ii = 1
+    for model, vars in zip(simple_models, lst_vars):
+        print(f"Batch simple models (model {ii} / 7)")
+        model.fit_(x_train_tr[data_idx(vars)], y_train_tr)
+        ii += 1
     
     # ###################################################################### #
     #                           Second Bath of models                        #
     # ###################################################################### #
     # 'intermediate' models
+    lr_w2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
+    lr_w3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
+    lr_w4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
     
+    lr_p2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
+    lr_p3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
+    lr_p4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    
+    lr_t2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
+    lr_t3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
+    lr_t4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    
+    lr_w_p_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_w_p_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
+    lr_w_p_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    
+    lr_w_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_w_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
+    lr_w_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    
+    lr_p_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_p_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
+    lr_p_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    
+    intermediate_models = [lr_w2, lr_w3, lr_w4, lr_p2, lr_p3, lr_p4, lr_t2,
+                           lr_t3, lr_t4, lr_w_p_2, lr_w_p_3, lr_w_p_4, lr_w_t_2,
+                           lr_w_t_3, lr_w_t_4, lr_p_t_2, lr_p_t_3, lr_p_t_4]
+    
+    lst_vars = [['w', 'w2'],
+                ['w', 'w2', 'w3'],
+                ['w', 'w2', 'w3', 'w4'],
+                ['p', 'p2'],
+                ['p', 'p2', 'p3'],
+                ['p', 'p2', 'p3', 'p4'],
+                ['t', 't2'],
+                ['t', 't2', 't3'],
+                ['t', 't2', 't3', 't4'],
+                ['w', 'w2', 'p', 'p2'],
+                ['w', 'w2', 'w3', 'p', 'p2', 'p3'],
+                ['w', 'w2', 'w3', 'w4', 'p', 'p2', 'p3', 'p4'],
+                ['w', 'w2', 't', 't2'],
+                ['w', 'w2', 'w3', 't', 't2', 't3'],
+                ['w', 'w2', 'w3', 'w4', 't', 't2', 't3', 't4'],
+                ['p', 'p2', 't', 't2'],
+                ['p', 'p2', 'p3', 't', 't2', 't3'],
+                ['p', 'p2', 'p3', 'p4', 't', 't2', 't3', 't4']]
+    
+    ii = 1
+    for model, vars in zip(intermediate_models, lst_vars):
+        print(f"Batch simple models (model {ii} / 18)")
+        model.fit_(x_train_tr[data_idx(vars)], y_train_tr)
+        ii += 1
     
     # ###################################################################### #
     #                            Third Bath of models                        #
