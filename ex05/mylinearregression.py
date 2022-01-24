@@ -196,6 +196,7 @@ class MyLinearRegression(Metrics):
             for _ in range(self.max_iter):
                 grad = self._gradient_(x, y)
                 self.thetas = self.thetas - self.alpha * grad
+            return self
         except:
             # If something unexpected happened, we juste leave
             print("Something wrong during fit.")
