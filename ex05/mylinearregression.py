@@ -221,7 +221,7 @@ class MyLinearRegression(Metrics):
             ## Checking y and y_hat are numpy array
             if (not isinstance(x, np.ndarray)) \
                 or (not isinstance(y, np.ndarray)):
-                    return None
+                return None
 
             ## Checking the shape of y and y_hat
             if (x.shape[1] + 1 != self.thetas.shape[0]) \
@@ -253,7 +253,7 @@ class MyLinearRegression(Metrics):
             ## Checking y and y_hat are numpy array
             if (not isinstance(x, np.ndarray)) \
                 or (not isinstance(y, np.ndarray)):
-                    return None
+                return None
 
             ## Checking the shape of y and y_hat
             if (x.shape[1] + 1 != self.thetas.shape[0]) \
