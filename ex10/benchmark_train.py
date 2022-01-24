@@ -7,6 +7,10 @@ import sys
 import numpy as np
 import pandas as pd
 
+# Pour le multiprocessing
+import concurrent.futures
+from multiprocessing import cpu_count
+
 path = os.path.join(os.path.dirname(__file__), '..', 'ex09')
 sys.path.insert(1, path)
 from data_spliter import data_spliter
@@ -27,6 +31,9 @@ from scaler import MyStandardScaler
 # ######################################################### #
 #                        CONSTANTES                         #
 # ######################################################### #
+
+n_cpu = cpu_count()
+cpu_use = int(n_cpu/2)
 
 lst_check_feat = ["weight", "prod_distance", "time_delivery"]
 lst_dataset = lst_check_feat + ["target"]
@@ -144,52 +151,54 @@ if __name__ == "__main__":
     #                            First Bath of models                        #
     # ###################################################################### #
     # Simple models:
-    lr_w = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
-    lr_p = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
-    lr_t = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=5000)
+    lr_w = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=50000)
+    lr_p = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=50000)
+    lr_t = MyLR(np.random.rand(2,1), alpha=1e-2, max_iter=50000)
     
-    lr_wp = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
-    lr_wt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
-    lr_pt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=5000)
+    lr_wp = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=50000)
+    lr_wt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=50000)
+    lr_pt = MyLR(np.random.rand(3,1), alpha=1e-2, max_iter=50000)
     
-    lr_wpt = MyLR(np.random.rand(4,1), alpha=1e-2, max_iter=5000)
+    lr_wpt = MyLR(np.random.rand(4,1), alpha=1e-2, max_iter=50000)
     
+
     simple_models = [lr_w, lr_p, lr_t, lr_wp, lr_wt, lr_pt, lr_wpt]
     lst_vars = [['w'], ['p'], ['t'], ['w', 'p'], ['w', 't'], ['p', 't'], ['w', 'p', 't']]
+    
     
     ii = 1
     for model, vars in zip(simple_models, lst_vars):
         print(f"Batch simple models (model {ii} / 7)")
-        model.fit_(x_train_tr[data_idx(vars)], y_train_tr)
+        model.fit_(x_train_tr[:,data_idx(vars)], y_train_tr)
         ii += 1
     
     # ###################################################################### #
     #                           Second Bath of models                        #
     # ###################################################################### #
     # 'intermediate' models
-    lr_w2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
-    lr_w3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
-    lr_w4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_w2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=50000)
+    lr_w3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=50000)
+    lr_w4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
     
-    lr_p2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
-    lr_p3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
-    lr_p4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_p2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=50000)
+    lr_p3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=50000)
+    lr_p4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
     
-    lr_t2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=5000)
-    lr_t3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=5000)
-    lr_t4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
+    lr_t2 = MyLR(np.random.rand(3, 1), alpha=1e-2, max_iter=50000)
+    lr_t3 = MyLR(np.random.rand(4, 1), alpha=1e-2, max_iter=50000)
+    lr_t4 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
     
-    lr_w_p_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
-    lr_w_p_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
-    lr_w_p_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    lr_w_p_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
+    lr_w_p_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=50000)
+    lr_w_p_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=50000)
     
-    lr_w_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
-    lr_w_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
-    lr_w_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    lr_w_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
+    lr_w_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=50000)
+    lr_w_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=50000)
     
-    lr_p_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=5000)
-    lr_p_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=5000)
-    lr_p_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=5000)
+    lr_p_t_2 = MyLR(np.random.rand(5, 1), alpha=1e-2, max_iter=50000)
+    lr_p_t_3 = MyLR(np.random.rand(7, 1), alpha=1e-2, max_iter=50000)
+    lr_p_t_4 = MyLR(np.random.rand(9, 1), alpha=1e-2, max_iter=50000)
     
     intermediate_models = [lr_w2, lr_w3, lr_w4, lr_p2, lr_p3, lr_p4, lr_t2,
                            lr_t3, lr_t4, lr_w_p_2, lr_w_p_3, lr_w_p_4, lr_w_t_2,
@@ -217,10 +226,25 @@ if __name__ == "__main__":
     ii = 1
     for model, vars in zip(intermediate_models, lst_vars):
         print(f"Batch simple models (model {ii} / 18)")
-        model.fit_(x_train_tr[data_idx(vars)], y_train_tr)
+        model.fit_(x_train_tr[:,data_idx(vars)], y_train_tr)
         ii += 1
     
     # ###################################################################### #
     #                            Third Bath of models                        #
     # ###################################################################### #
     # 'sophisticate' models
+
+    results=[]
+    with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_use) as executor:
+        
+        for ii, model, vars in zip(range(len(simple_models)), simple_models, lst_vars):
+            print(f"Batch simple models (model {ii} / 7)")
+            results.append(executor.submit(model.fit_, x_train_tr[:,data_idx(vars)], y_train_tr))
+            #model.fit_(x_train_tr[:,data_idx(vars)], y_train_tr)
+        
+        for task in concurrent.futures.as_completed(results):
+            if task.result() != None and 'model' in task.result().keys():
+                pdq = task.result()['model'].order
+                PDQS = task.result()['model'].seasonal_order
+                print(f"... done ... modele SARIMA: {pdq}{PDQS} -- {i}/{orders_size}", end='\r', flush=True)
+            i += 1
