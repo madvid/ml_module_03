@@ -49,7 +49,7 @@ from scaler import MyStandardScaler
 # ######################################################### #
 
 n_cpu = cpu_count()
-cpu_use = int(n_cpu/2)
+cpu_use = int(2 * n_cpu / 3)
 print("CPU USE: ", cpu_use)
 
 lst_check_feat = ["weight", "prod_distance", "time_delivery"]
@@ -90,6 +90,19 @@ def data_idx(cols):
     for c in cols:
         lst.append(col2idx[c])
     return np.array(lst, dtype=int)
+
+
+def loss_report(x:np.array, y:np.array, lst_vars:list, lst_models:list):
+    #print('#' * 79)
+    print('#' * 25 + '| MSE:')
+    
+    for model, vars in zip(lst_models, lst_vars):
+        print("model.thetas.shape: ", model.thetas.shape)
+        print(f"len(vars) = {len(vars)} -- vars:", vars)
+        print("x[:, data_idx(vars)].shape = ", x[:, data_idx(vars)].shape)
+        loss = model.loss_(x[:, data_idx(vars)], y)
+        print(model._tag_.ljust(25) + f"| {loss:.5f}")
+    
 
 # ######################################################### #
 #                             MAIN                          #
@@ -176,35 +189,31 @@ if __name__ == "__main__":
     
 
     simple_models = [lr_w, lr_p, lr_t, lr_wp, lr_wt, lr_pt, lr_wpt]
-    lst_vars = [['w'], ['p'], ['t'],
-                ['w', 'p'], ['w', 't'], ['p', 't'], ['w', 'p', 't']]
+    lst_vars1 = [['w'], ['p'], ['t'],
+                 ['w', 'p'], ['w', 't'], ['p', 't'], ['w', 'p', 't']]
+
     
-    
-    # ii = 1
-    # for model, vars in zip(simple_models, lst_vars):
-    #     print(f"Batch simple models (model {ii} / 7)")
-    #     model.fit_(x_train_tr[:,data_idx(vars)], y_train_tr)
-    #     ii += 1
-    
+    batch1_future = []
     batch1_trained = []
     nb = len(simple_models)
     s_state = ['[ ]'] * nb
     with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_use) as executor:
         # Starting/Exectuting processes
-        for ii, model, vars in zip(range(nb), simple_models, lst_vars):
+        for ii, model, vars in zip(range(nb), simple_models, lst_vars1):
             print(f"Batch simple: starting model {ii + 1} / {nb}", end='\r', flush=True)
             model._tag_, model._idx_ = f"batch_1_model_{ii + 1}", ii
-            batch1_trained.append(executor.submit(model.fit_,
+            batch1_future.append(executor.submit(model.fit_,
                                            x_train_tr[:,data_idx(vars)],
                                            y_train_tr))
         print('\n')
         # Action when process are completed
         # (just printing the state string to have an idea of the remaining train)
-        for task in concurrent.futures.as_completed(batch1_trained):
+        for task in concurrent.futures.as_completed(batch1_future):
             if task.result() != None:
+                batch1_trained.append(task.result())
                 s_state[task.result()._idx_] = '[✔]'
                 print('Simple batch: ' + ' '.join(s_state), end='\r', flush=True)
-    
+
     # ###################################################################### #
     #                           Second Bath of models                        #
     # ###################################################################### #
@@ -237,44 +246,50 @@ if __name__ == "__main__":
                            lr_t3, lr_t4, lr_w_p_2, lr_w_p_3, lr_w_p_4, lr_w_t_2,
                            lr_w_t_3, lr_w_t_4, lr_p_t_2, lr_p_t_3, lr_p_t_4]
     
-    lst_vars = [['w', 'w2'],
-                ['w', 'w2', 'w3'],
-                ['w', 'w2', 'w3', 'w4'],
-                ['p', 'p2'],
-                ['p', 'p2', 'p3'],
-                ['p', 'p2', 'p3', 'p4'],
-                ['t', 't2'],
-                ['t', 't2', 't3'],
-                ['t', 't2', 't3', 't4'],
-                ['w', 'w2', 'p', 'p2'],
-                ['w', 'w2', 'w3', 'p', 'p2', 'p3'],
-                ['w', 'w2', 'w3', 'w4', 'p', 'p2', 'p3', 'p4'],
-                ['w', 'w2', 't', 't2'],
-                ['w', 'w2', 'w3', 't', 't2', 't3'],
-                ['w', 'w2', 'w3', 'w4', 't', 't2', 't3', 't4'],
-                ['p', 'p2', 't', 't2'],
-                ['p', 'p2', 'p3', 't', 't2', 't3'],
-                ['p', 'p2', 'p3', 'p4', 't', 't2', 't3', 't4']]
+    lst_vars2 = [['w', 'w2'],
+                 ['w', 'w2', 'w3'],
+                 ['w', 'w2', 'w3', 'w4'],
+                 ['p', 'p2'],
+                 ['p', 'p2', 'p3'],
+                 ['p', 'p2', 'p3', 'p4'],
+                 ['t', 't2'],
+                 ['t', 't2', 't3'],
+                 ['t', 't2', 't3', 't4'],
+                 ['w', 'w2', 'p', 'p2'],
+                 ['w', 'w2', 'w3', 'p', 'p2', 'p3'],
+                 ['w', 'w2', 'w3', 'w4', 'p', 'p2', 'p3', 'p4'],
+                 ['w', 'w2', 't', 't2'],
+                 ['w', 'w2', 'w3', 't', 't2', 't3'],
+                 ['w', 'w2', 'w3', 'w4', 't', 't2', 't3', 't4'],
+                 ['p', 'p2', 't', 't2'],
+                 ['p', 'p2', 'p3', 't', 't2', 't3'],
+                 ['p', 'p2', 'p3', 'p4', 't', 't2', 't3', 't4']]
     
     
     # I could do a wrapping function taking only the x_train_tr, y_train_tr and models
     # and performing the full multi process training
+    batch2_future = []
     batch2_trained = []
     nb = len(intermediate_models)
     s_state = ['[ ]'] * nb
     print('\n')
     with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_use) as executor:
         
-        for ii, model, vars in zip(range(nb), intermediate_models, lst_vars):
+        for ii, model, vars in zip(range(nb), intermediate_models, lst_vars2):
             print(f"Batch intermediate: starting model {ii + 1} / {nb}", end='\r', flush=True)
             model._tag_, model._idx_ = f"batch_2_model_{ii + 1}", ii
-            batch2_trained.append(executor.submit(model.fit_, x_train_tr[:,data_idx(vars)], y_train_tr))
+            batch2_future.append(executor.submit(model.fit_, x_train_tr[:,data_idx(vars)], y_train_tr))
         print('\n')
-        for task in concurrent.futures.as_completed(batch2_trained):
+        for task in concurrent.futures.as_completed(batch2_future):
             if task.result() != None:
+                batch2_trained.append(task.result())
                 s_state[task.result()._idx_] = '[✔]'
                 print('Intermediate batch: ' + ' '.join(s_state), end='\r', flush=True)
     
+    loss_report(x_cross_tr, y_cross_tr,
+                lst_vars1 + lst_vars2,
+                batch1_trained + batch2_trained)
+    sys.exit()
     # ###################################################################### #
     #                            Third Bath of models                        #
     # ###################################################################### #
@@ -347,36 +362,39 @@ if __name__ == "__main__":
     lst_WPT = lst_W + lst_P + lst_T
 
     # My apologize, it might be painful to read: It is the list of var string    
-    lst_vars = [lst_WP + [lst_T[0]], lst_WP + lst_T[0:2], lst_WP + lst_T[:3],
-                lst_WPT, lst_WT + [lst_P[0]], lst_WT + lst_P[0:2], lst_WT + lst_P[:3],
-                lst_PT + [lst_W[0]], lst_PT + lst_W[0:2], lst_PT + lst_W[:3],
-                lst_WPT + ['wp'], lst_WPT + ['w2p'], lst_WPT + ['wp2'], lst_WPT + ['w2p2'],
-                lst_WPT + ['wp', 'w2p', 'wp2', 'w2p2'],
-                lst_WPT + ['wt'], lst_WPT + ['w2t'], lst_WPT + ['wt2'], lst_WPT + ['w2t2'],
-                lst_WPT + ['wt', 'w2t', 'wt2', 'w2t2'],
-                lst_WPT + ['pt'], lst_WPT + ['p2t'], lst_WPT + ['pt2'], lst_WPT + ['p2t2'],
-                lst_WPT + ['pt', 'p2t', 'pt2', 'p2t2'],
-                lst_WPT + ['wp', 'w2p', 'wp2', 'w2p2'] + ['wt', 'w2t', 'wt2', 'w2t2'] \
+    lst_vars3 = [lst_WP + [lst_T[0]], lst_WP + lst_T[0:2], lst_WP + lst_T[:3],
+                 lst_WPT, lst_WT + [lst_P[0]], lst_WT + lst_P[0:2], lst_WT + lst_P[:3],
+                 lst_PT + [lst_W[0]], lst_PT + lst_W[0:2], lst_PT + lst_W[:3],
+                 lst_WPT + ['wp'], lst_WPT + ['w2p'], lst_WPT + ['wp2'], lst_WPT + ['w2p2'],
+                 lst_WPT + ['wp', 'w2p', 'wp2', 'w2p2'],
+                 lst_WPT + ['wt'], lst_WPT + ['w2t'], lst_WPT + ['wt2'], lst_WPT + ['w2t2'],
+                 lst_WPT + ['wt', 'w2t', 'wt2', 'w2t2'],
+                 lst_WPT + ['pt'], lst_WPT + ['p2t'], lst_WPT + ['pt2'], lst_WPT + ['p2t2'],
+                 lst_WPT + ['pt', 'p2t', 'pt2', 'p2t2'],
+                 lst_WPT + ['wp', 'w2p', 'wp2', 'w2p2'] + ['wt', 'w2t', 'wt2', 'w2t2'] \
                     + ['pt', 'p2t', 'pt2', 'p2t2']]
-    for elem in lst_vars:
-        print(elem)
+
     # Yep I could have done this function ...
     batch3_trained = []
+    batch3_future = []
     nb = len(sophisticatish_models)
     s_state = ['[ ]'] * nb
     print('\n')
     with concurrent.futures.ProcessPoolExecutor(max_workers=cpu_use) as executor:
         
-        for ii, model, vars in zip(range(nb), sophisticatish_models, lst_vars):
+        for ii, model, vars in zip(range(nb), sophisticatish_models, lst_vars3):
             print(f"Batch 'sophisticated': starting model {ii + 1} / {nb}", end='\r', flush=True)
             model._tag_, model._idx_ = f"batch_3_model_{ii + 1}", ii
-            batch3_trained.append(executor.submit(model.fit_, x_train_tr[:,data_idx(vars)], y_train_tr))
+            batch3_future.append(executor.submit(model.fit_, x_train_tr[:,data_idx(vars)], y_train_tr))
         print('\n')
-        for task in concurrent.futures.as_completed(batch3_trained):
+        for task in concurrent.futures.as_completed(batch3_future):
             if task.result() != None:
+                batch3_trained.append(task.result())
                 s_state[task.result()._idx_] = '[✔]'
                 print("Sophisticatish batch: " + ' '.join(s_state), end='\r', flush=True)
     
     print('\n')
-    
-    
+    loss_report(x_cross_tr, y_cross_tr,
+                lst_vars1 + lst_vars2 + lst_vars3,
+                batch1_trained + batch2_trained + batch3_trained)
+    sys.exit()
