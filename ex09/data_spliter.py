@@ -20,24 +20,25 @@ def data_spliter(x, y, proportion):
     #try:
     if (not isinstance(x, np.ndarray)) \
         or (not isinstance(y, np.ndarray)):
-        print("toto")
         return None
+
     if  (x.shape[0] != y.shape[0]) \
         or (y.ndim != 2) or (x.ndim != 2) \
             or (y.shape[1] != 1):
-        print("ici")
         return None
+
     data = np.hstack((x, y))
     p = int(np.floor(x.shape[0] * proportion))
-    np.random.default_rng().shuffle(data)
+    np.random.default_rng(0).shuffle(data)
+
     x_train, y_train = data[:p, :-1], data[:p, -1:]
     x_test, y_test = data[p:, :-1], data[p:, -1:]
+
     return (x_train, x_test, y_train, y_test)
     #except:
     #    return None
 
 if __name__ == "__main__":
-    np.random.seed = 42
     x1 = np.array([[1],[ 42],[ 300],[ 10],[ 59]])
     y = np.array([[0],[1],[0],[1],[0]])
     

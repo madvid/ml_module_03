@@ -37,38 +37,43 @@ def gradient(x, y, theta):
                 or ((x.shape[1] + 1) != theta.shape[0]):
             return None
 
-        m, grad = x.shape[0], np.zeros(theta.shape)
+        m = x.shape[0]
         xp = np.hstack((np.ones((m, 1)), x))
-        grad = xp.T @ (xp @ theta - y)
 
+        grad = xp.T @ (xp @ theta - y)
         return grad / m
     except:
         return None
 
 
 if __name__ == "__main__":
-    x = np.array([
-        [ -6, -7, -9],
-        [ 13, -2, 14],
-        [ -7, 14, -1],
-        [ -8, -4, 6],
-        [ -5, -9, 6],
-        [ 1, -5, 11],
-        [ 9, -11, 8]])
-    y = np.array([[2],[ 14],[ -13],[ 5],[ 12],[ 4],[ -19]])
+    x = np.array([[-6, -7, -9],
+                  [13, -2, 14],
+                  [-7, 14, -1],
+                  [-8, -4, 6],
+                  [-5, -9, 6],
+                  [1, -5, 11],
+                  [9, -11, 8]])
+    y = np.array([[2], [14], [-13], [5], [12], [4], [-19]])
 
     print("# Example 0:")
-    theta1 = np.array([[0],[ 3],[ 0.5],[ -6]])
+    theta1 = np.array([[0], [3], [0.5], [-6]])
     grad = gradient(x, y, theta1)
     # Output:
-    expected_grad = np.array([[ -33.71428571],[ -37.35714286],[ 183.14285714],[ -393.]])
-    print("my gradient: ", grad)
-    print("expected gradient: ", expected_grad)
-    
+    expected_grad = np.array([[-33.71428571],
+                              [-37.35714286],
+                              [183.14285714],
+                              [-393.]])
+    print("my gradient:\n", grad)
+    print("expected gradient:\n", expected_grad)
+
     print("\n# Example 1:")
-    theta2 = np.array([[0],[ 0],[ 0],[ 0]])
+    theta2 = np.array([[0], [0], [0], [0]])
     grad = gradient(x, y, theta2)
     # Output:
-    expected_grad = np.array([[ -0.71428571],[ 0.85714286],[ 23.28571429],[ -26.42857143]])
-    print("my gradient: ", grad)
-    print("expected gradient: ", expected_grad)
+    expected_grad = np.array([[-0.71428571],
+                              [0.85714286],
+                              [23.28571429],
+                              [-26.42857143]])
+    print("my gradient:\n", grad)
+    print("expected gradient:\n", expected_grad)

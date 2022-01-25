@@ -4,7 +4,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib as mpl
-mpl.use('Qt5Agg')
+#mpl.use('Qt5Agg')
+#mpl.use('TkAgg')
 
 path = os.path.join(os.path.dirname(__file__), '..', 'ex05')
 sys.path.insert(1, path)

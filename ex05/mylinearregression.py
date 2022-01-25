@@ -102,7 +102,7 @@ class MyLinearRegression(Metrics):
             s = "At least one of the parameters is not of expected type."
             raise TypeError(s)
 
-        # Testing the shape of the paramters.
+        # Conversion of thetas and testing the shape of the parameters.
         thetas = self._convert_thetas_(thetas)
         if (alpha >= 1) or (alpha <= 0) or (max_iter <= 0):
             return None
@@ -114,31 +114,41 @@ class MyLinearRegression(Metrics):
 
     @staticmethod
     def _convert_thetas_(thetas):
+        """ Private function, convert thetas parameter in the constructor
+        from tuple or list into numpy ndarray.
+        Args:
+            thetas: list, tuple or numpy ndarray containing the model's
+                    coefficients.
+        """
         if isinstance(thetas, np.ndarray):
             return thetas
         return np.array(thetas).reshape(-1, 1)
 
     def _gradient_(self, x, y):
-        """ Private function gradient, there is no test perform on the
-        parameters. It is to avoid to perform useless same tests as each
-        call of gradient in fit method.
+        """ Private function gradient, there is no test performed on the
+        parameters. It is to avoid to perform useless same tests at every
+        iteration of the loop in the fit method.
+        Args:
+            x: has to be an numpy.array, a matrix of shape m * n.
+            y: has to be an numpy.array, a vector of shape m * 1.
+        Return:
+            The gradient as a numpy.array, a vector of shape n * 1,
         """
         xp = np.hstack((np.ones((x.shape[0], 1)), x))
         return xp.T @ (xp @ self.thetas - y) / x.shape[0]
 
     def gradient(self, x, y):
         """Computes a gradient vector from three non-empty numpy.array,
-        without any for-loop. The three arrays must have compatible
-        shapes.
+        without any for-loop. The three arrays must have the compatible shapes.
         Args:
-            x: has to be an numpy.array, a vector of shape m * 1.
+            x: has to be an numpy.array, a matrix of shape m * n.
             y: has to be an numpy.array, a vector of shape m * 1.
-            theta: has to be an numpy.array, a 2 * 1 vector.
         Return:
-            The gradient as a numpy.array, a vector of shape 2 * 1.
-            None if x, y, or theta are empty numpy.array.
-            None if x, y and theta do not have compatible shapes.
-            None if x, y or theta is not of the expected type.
+            The gradient as a numpy.array, a vector of shape n * 1,
+              containg the result of the formula for all j.
+            None if x, y, or self.thetas are empty numpy.array.
+            None if x, y and self.thetas do not have compatible shapes.
+            None if x, y or self.thetas is not of expected type.
         Raises:
             This function should not raise any Exception.
         """
@@ -159,6 +169,7 @@ class MyLinearRegression(Metrics):
 
             return grad
         except:
+            # If something unexpected happened, we juste leave
             return None
 
     def fit_(self, x, y):
@@ -175,7 +186,7 @@ class MyLinearRegression(Metrics):
             max_iter: has to be an int, the number of iterations done during
                       the gradient descent
         Return:
-            new_theta: numpy.array, a vector of shape 2 * 1.
+            self: instance of MyLinearRegression, more convenient in ex10.
             None if there is a matching shape problem.
             None if x, y, theta, alpha or max_iter is not of the expected type.
         Raises:
@@ -199,7 +210,7 @@ class MyLinearRegression(Metrics):
             return self
         except:
             # If something unexpected happened, we juste leave
-            print("Something wrong during fit.")
+            print("Something wrong during fit.", file=sys.stderr)
             return None
 
     def loss_elem_(self, x, y):
@@ -321,6 +332,7 @@ class MyLinearRegression(Metrics):
             # loss = (y - y_hat).T @ (y - y_hat) / (2.0 * y.shape[0])
             return float(loss) / 2.0
         except:
+            # If something unexpected happened, we juste leave
             None
 
     def predict_(self, x):
@@ -350,6 +362,7 @@ class MyLinearRegression(Metrics):
             ypred = xp @ self.thetas
             return ypred
         except:
+            # If something unexpected happened, we juste leave
             return None
 
 if __name__ == "__main__":

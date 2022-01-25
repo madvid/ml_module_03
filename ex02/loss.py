@@ -1,4 +1,6 @@
+import sys
 import numpy as np
+
 
 def loss_(y, y_hat):
     """Computes the half mean squared error of two non-empty numpy.array,
@@ -15,29 +17,40 @@ def loss_(y, y_hat):
         This function should not raise any Exception.
     """
     try:
-        ## Checking y and y_hat are numpy array
+        # Checking y and y_hat are numpy array
         if (not isinstance(y, np.ndarray)) \
-            or (not isinstance(y_hat, np.ndarray)):
-                return None
-        
-        ## Checking the shape of y and y_hat
+                or (not isinstance(y_hat, np.ndarray)):
+            print("Numpy arrays are expected.", file=sys.stderr)
+            return None
+
+        # Checking the shape of y and y_hat
         if (y.shape[1] != 1) \
             or (y_hat.shape[1] != 1) \
                 or (y_hat.shape[0] != y.shape[0]):
-                    return None
+            s = "Shape issue: either y and/or y_hat are not 2 dimensional," \
+                + " or not the same number of lines."
+            print(s, file=sys.stderr)
+            return None
         loss = (y - y_hat).T @ (y - y_hat) / (2.0 * y.shape[0])
         return float(loss)
     except:
         None
 
+
 if __name__ == "__main__":
-    X = np.array([[0],[ 15],[ -9],[ 7],[ 12],[ 3],[ -21]])
-    Y = np.array([[2],[ 14],[ -13],[ 5],[ 12],[ 4],[ -19]])
-    # Example 0:
-    loss_(X, Y)
+    X = np.array([[0], [15], [-9], [7], [12], [3], [-21]])
+    Y = np.array([[2], [14], [-13], [5], [12], [4], [-19]])
+
+    print("# Example 0:")
+    myloss = loss_(X, Y)
     # Output:
-    2.1428571428571436
-    # Example 1:
-    loss_(X, X)
+    expected_loss = 2.1428571428571436
+    print("my loss: ".ljust(20), myloss)
+    print("expected loss: ".ljust(20), expected_loss)
+
+    print("\n# Example 1:")
+    myloss = loss_(X, X)
     # Output:
-    0.0
+    expected_loss = 0.0
+    print("my loss: ".ljust(20), myloss)
+    print("expected loss: ".ljust(20), expected_loss)

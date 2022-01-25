@@ -36,7 +36,7 @@ if __name__ == '__main__':
     np.random.seed = 42
     mylr_Age = MyLinearRegression(np.random.rand(2,1), alpha = 5e-3, max_iter = 50000)
     mylr_Thrust = MyLinearRegression(np.random.rand(2,1), alpha = 1e-4, max_iter = 50000)
-    mylr_Distance = MyLinearRegression(np.random.rand(2,1), alpha = 1e-4, max_iter = 750000)
+    mylr_Distance = MyLinearRegression(np.random.rand(2,1), alpha = 2e-4, max_iter = 100000)
     
     target = data.Sell_price.values.reshape(-1,1)
     age = data.Age.values.reshape(-1,1)
@@ -46,8 +46,11 @@ if __name__ == '__main__':
     # Training: no splitting of the data into tain and test sets
     # (for those who knows as ML/DL students, datascientists, ... 
     # close your eyes, it will be over soon)
+    print("P1: starting the training of mylr_Age.")
     mylr_Age.fit_(age, target)
+    print("P1: starting the training of mylr_Thrust.")
     mylr_Thrust.fit_(thrust, target)
+    print("P1: starting the training of mylr_Distance.")
     mylr_Distance.fit_(distance, target)
     mse_Age = mylr_Age._loss_(target, mylr_Age.predict_(age))
     mse_Thrust = mylr_Thrust._loss_(target, mylr_Thrust.predict_(age))
@@ -88,10 +91,11 @@ if __name__ == '__main__':
     #             PART TWO: Multivariate Linear Regression            #
     # ############################################################### #
     n_feat = 3
-    mylr_multi = MyLinearRegression(np.random.rand(n_feat + 1, 1), alpha=1e-5, max_iter=75000)
+    mylr_multi = MyLinearRegression(np.random.rand(n_feat + 1, 1), alpha=5e-5, max_iter=75000)
     
     x = data[['Age', 'Thrust_power', 'Terameters']].values
     
+    print("P2: starting the training of mylr_multi.")
     mylr_multi.fit_(x, target)
     mse_multi = mylr_multi._loss_(target, mylr_multi.predict_(x))
     multi_pred = mylr_multi.predict_(x)
