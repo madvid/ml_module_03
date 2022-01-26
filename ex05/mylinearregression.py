@@ -3,21 +3,21 @@ import numpy as np
 from math import sqrt
 import sys
 
+
 class Metrics():
 
     @staticmethod
     def mse_(y, y_hat):
-        """
-        Description:
-        Calculate the MSE between the predicted output and the real output.
+        """ Calculate the MSE between the predicted output and the
+        real output.
         Args:
-        y: has to be a numpy.array, a vector of shape m * 1.
-        y_hat: has to be a numpy.array, a vector of shape m * 1.
+            y: has to be a numpy.array, a vector of shape m * 1.
+            y_hat: has to be a numpy.array, a vector of shape m * 1.
         Returns:
-        mse: has to be a float.
-        None if there is a matching shape problem.
+            mse: has to be a float.
+            None if there is a matching shape problem.
         Raises:
-        This function should not raise any Exception.
+            This function should not raise any Exception.
         """
         try:
             mse = (1.0 / y.shape[0]) * np.sum((y - y_hat) ** 2, axis=0)
@@ -27,17 +27,16 @@ class Metrics():
 
     @staticmethod
     def rmse_(y, y_hat):
-        """
-        Description:
-        Calculate the RMSE between the predicted output and the real output.
+        """ Calculate the RMSE between the predicted output and
+        the real output.
         Args:
-        y: has to be a numpy.array, a vector of shape m * 1.
-        y_hat: has to be a numpy.array, a vector of shape m * 1.
+            y: has to be a numpy.array, a vector of shape m * 1.
+            y_hat: has to be a numpy.array, a vector of shape m * 1.
         Returns:
-        rmse: has to be a float.
-        None if there is a matching shape problem.
+            rmse: has to be a float.
+            None if there is a matching shape problem.
         Raises:
-        This function should not raise any Exception.
+            This function should not raise any Exception.
         """
         try:
             rmse = sqrt(Metrics.mse_(y, y_hat))
@@ -47,17 +46,16 @@ class Metrics():
 
     @staticmethod
     def mae_(y, y_hat):
-        """
-        Description:
-        Calculate the MAE between the predicted output and the real output.
+        """ Calculate the MAE between the predicted output and
+        the real output.
         Args:
-        y: has to be a numpy.array, a vector of shape m * 1.
-        y_hat: has to be a numpy.array, a vector of shape m * 1.
+            y: has to be a numpy.array, a vector of shape m * 1.
+            y_hat: has to be a numpy.array, a vector of shape m * 1.
         Returns:
-        mae: has to be a float.
-        None if there is a matching shape problem.
+            mae: has to be a float.
+            None if there is a matching shape problem.
         Raises:
-        This function should not raise any Exception.
+            This function should not raise any Exception.
         """
         try:
             mae = (1.0 / y.shape[0]) * np.sum(np.absolute(y - y_hat), axis=0)
@@ -67,17 +65,16 @@ class Metrics():
 
     @staticmethod
     def r2score_(y, y_hat):
-        """
-        Description:
-        Calculate the R2score between the predicted output and the output.
+        """ Calculate the R2score between the predicted output
+        and the output.
         Args:
-        y: has to be a numpy.array, a vector of shape m * 1.
-        y_hat: has to be a numpy.array, a vector of shape m * 1.
+            y: has to be a numpy.array, a vector of shape m * 1.
+            y_hat: has to be a numpy.array, a vector of shape m * 1.
         Returns:
-        r2score: has to be a float.
-        None if there is a matching shape problem.
+            r2score: has to be a float.
+            None if there is a matching shape problem.
         Raises:
-        This function should not raise any Exception.
+            This function should not raise any Exception.
         """
         try:
             mean = np.mean(y, axis=0)
@@ -218,33 +215,32 @@ class MyLinearRegression(Metrics):
         Description:
         Calculates all the elements (y_pred - y)^2 of the loss function.
         Args:
-        y: has to be an numpy.array, a vector.
-        y_hat: has to be an numpy.array, a vector.
+            y: has to be an numpy.array, a vector.
+            y_hat: has to be an numpy.array, a vector.
         Returns:
-        J_elem: numpy.array, a vector of dimension
-                (number of the training examples,1).
-        None if there is a dimension matching problem between y and y_hat.
-        None if y or y_hat is not of the expected type.
+            J_elem: numpy.array, a vector of dimension
+                    (number of the training examples,1).
+            None if there is a dimension matching problem between y and y_hat.
+            None if y or y_hat is not of the expected type.
         Raises:
-        This function should not raise any Exception.
+            This function should not raise any Exception.
         """
         try:
-            ## Checking y and y_hat are numpy array
+            # Checking y and y_hat are numpy array
             if (not isinstance(x, np.ndarray)) \
-                or (not isinstance(y, np.ndarray)):
+                    or (not isinstance(y, np.ndarray)):
                 return None
 
-            ## Checking the shape of y and y_hat
+            # Checking the shape of y and y_hat
             if (x.shape[1] + 1 != self.thetas.shape[0]) \
-                or (y.shape[1] != 1) \
+                    or (y.shape[1] != 1) \
                     or (x.shape[0] != y.shape[0]):
                 return None
-            
+
             res = (self.predict_(x) - y) ** 2
             return res
         except:
             None
-
 
     def loss_(self, x, y):
         """Computes the half mean squared error of two non-empty numpy.array,
@@ -261,23 +257,22 @@ class MyLinearRegression(Metrics):
             This function should not raise any Exception.
         """
         try:
-            ## Checking y and y_hat are numpy array
+            # Checking y and y_hat are numpy array
             if (not isinstance(x, np.ndarray)) \
-                or (not isinstance(y, np.ndarray)):
+                    or (not isinstance(y, np.ndarray)):
                 return None
 
-            ## Checking the shape of y and y_hat
+            # Checking the shape of y and y_hat
             if (x.shape[1] + 1 != self.thetas.shape[0]) \
-                or (y.shape[1] != 1) \
+                    or (y.shape[1] != 1) \
                     or (x.shape[0] != y.shape[0]):
                 return None
-            
-            #loss = MyLinearRegression.CLS_loss_fct(y, y_hat)
+
+            # loss = MyLinearRegression.CLS_loss_fct(y, y_hat)
             loss = (self.predict_(x) - y).T @ (self.predict_(x) - y)
             return float(loss) / (2.0 * y.shape[0])
         except:
             None
-
 
     @staticmethod
     def _loss_elem_(y, y_hat):
@@ -296,17 +291,17 @@ class MyLinearRegression(Metrics):
         This function should not raise any Exception.
         """
         try:
-            ## Checking y and y_hat are numpy array
+            # Checking y and y_hat are numpy array
             if (not isinstance(y, np.ndarray)) \
-                or (not isinstance(y_hat, np.ndarray)):
-                    return None
+                    or (not isinstance(y_hat, np.ndarray)):
+                return None
 
-            ## Checking the shape of y and y_hat
+            # Checking the shape of y and y_hat
             if (y.shape[1] != 1) \
                 or (y_hat.shape[1] != 1) \
                     or (y_hat.shape[0] != y.shape[0]):
                 return None
-            
+
             res = (y - y_hat) ** 2
             return res
         except:
@@ -365,6 +360,7 @@ class MyLinearRegression(Metrics):
             # If something unexpected happened, we juste leave
             return None
 
+
 if __name__ == "__main__":
     X = np.array([[1., 1., 2., 3.], [5., 8., 13., 21.], [34., 55., 89., 144.]])
     Y = np.array([[23.], [48.], [218.]])
@@ -377,22 +373,19 @@ if __name__ == "__main__":
     print("my prediction:".ljust(20), pred.reshape(1, -1))
     print("expected prediction:".ljust(20), pred.reshape(1, -1))
 
-
     print("\n# Example 1:")
-    loss_e = mylr.loss_elem_(X,Y)
+    loss_e = mylr.loss_elem_(X, Y)
     # Output:
     expected_loss_e = np.array([[225.], [0.], [11025.]])
     print("my loss elem:".ljust(20), loss_e.reshape(1, -1))
     print("expected loss elem:".ljust(20), expected_loss_e.reshape(1, -1))
 
-
     print("\n# Example 2:")
-    loss = mylr.loss_(X,Y)
+    loss = mylr.loss_(X, Y)
     # Output:
     expected_loss = 1875.0
     print("my loss:".ljust(15), loss)
     print("expected loss:".ljust(15), expected_loss)
-
 
     print("\n# Example 3:")
     mylr.alpha = 1.6e-4
@@ -403,7 +396,6 @@ if __name__ == "__main__":
     print("my theta after training:\n", mylr.thetas.reshape(1, -1))
     print("expected theta after training:\n", expected_thetas.reshape(1, -1))
 
-
     print("\n# Example 4:")
     pred = mylr.predict_(X)
     # Output:
@@ -411,16 +403,15 @@ if __name__ == "__main__":
     print("my prediction:\n", pred.reshape(1, -1))
     print("expected prediction:\n", expected_pred.reshape(1, -1))
 
-
     print("\n# Example 5:")
-    loss_e = mylr.loss_elem_(X,Y)
+    loss_e = mylr.loss_elem_(X, Y)
     # Output:
     expected_loss_e = np.array([[0.174], [0.260], [0.004]])
     print("my loss elem:\n", loss_e.reshape(1, -1))
     print("expected loss elem:\n", expected_loss_e.reshape(1, -1))
 
     print("\n# Example 6:")
-    loss = mylr.loss_(X,Y)
+    loss = mylr.loss_(X, Y)
     # Output:
     expected_loss = 0.0732
     print("my loss:".ljust(15), loss)

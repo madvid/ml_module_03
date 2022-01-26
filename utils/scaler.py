@@ -5,8 +5,8 @@ class MyStandardScaler():
         pass
     
     def fit(self, X):
-        self.mean_ = np.mean(X)
-        self.std_ = np.std(X)
+        self.mean_ = np.mean(X, axis=0)
+        self.std_ = np.std(X, axis=0)
         
     def transform(self, X):
         X_tr = np.copy(X)
