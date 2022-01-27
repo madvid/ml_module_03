@@ -89,7 +89,7 @@ if __name__ == "__main__":
     # Retrieving the models' data from the pickle file
     data_models = None
     try:
-        with open("tmp.pickle", 'rb') as file:
+        with open("models.pickle", 'rb') as file:
             data_models = pickle.load(file)
     except FileNotFoundError:
         print("Pickle file was not found, check the name of the file.",
@@ -127,6 +127,7 @@ if __name__ == "__main__":
     plt.title("MSE vs explored models")
     plt.xticks(rotation=90)
     plt.grid()
+    plt.subplots_adjust(bottom=0.22)
     plt.show()
 
     # ##################################################### #

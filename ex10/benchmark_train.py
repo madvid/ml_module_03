@@ -450,5 +450,6 @@ if __name__ == "__main__":
 
     plt.xticks(rotation=90)
     plt.grid()
-    plt.show()
+    plt.subplots_adjust(bottom=0.22)
     plt.savefig("loss_vs_models_scoring_on_CV_sets.svg", dpi=500)
+    plt.show()
