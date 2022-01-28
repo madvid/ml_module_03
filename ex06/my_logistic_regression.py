@@ -1,8 +1,4 @@
 import numpy as np
-import sys
-
-inf_lim = -600  # To avoid RuntimeWarning do to overflow
-sup_lim = 256  # To avoid RuntimeWarning do to overflow (even if it occurs to ~ [1e17 ; 1e18])
 
 class MyLogisticRegression():
     """
