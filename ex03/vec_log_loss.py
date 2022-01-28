@@ -40,8 +40,8 @@ def vec_log_loss_(y, y_hat, eps=1e-30):
             print(s, file=sys.stderr)
             return None
 
-        log_loss = np.dot(y.T, np.log(y_hat + eps)) \
-                 + np.dot((1 - y).T, np.log(1 - y_hat + eps))
+        log_loss = np.dot(y.T, np.log(y_hat + eps)) \\
+            + np.dot((1 - y).T, np.log(1 - y_hat + eps))
         return - float(log_loss) / y.shape[0]
     except:
         return None
