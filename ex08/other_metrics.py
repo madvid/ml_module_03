@@ -4,19 +4,19 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 
 class Classif_utils():
     @staticmethod
-    def _true_positive_():
+    def _true_positive_(y, y_hat):
         pass
     
     @staticmethod
-    def _true_negative_():
+    def _true_negative_(y, y_hat):
         pass
 
     @staticmethod
-    def _false_positive_():
+    def _false_positive_(y, y_hat):
         pass
 
     @staticmethod
-    def _false_negative_():
+    def _false_negative_(y, y_hat):
         pass
 
 
@@ -34,7 +34,6 @@ def check_type(y, y_hat):
         s = "Unmatching data type."
         print(s, file=sys.stderr)
         sys.exit()
-
 
 
 def check_shape(y, y_hat):
@@ -61,10 +60,21 @@ def check_samples(y, y_hat):
     set_y_hat = np.unique(y_hat)
     
     if any([e not in set_y for e in set_y_hat]):
-        s = 
+        s = "Unexpected value in y_hat."
         print(s, file=sys.stderr)
         sys.exit()
 
+
+def labelencode(y, y_hat):
+    """
+    """
+    u, y_encoded = np.unique(y, return_inverse=True)
+    masks = [np.where(y_hat == label) for label in u]
+    y_hat_encoded = np.zeros(y_encoded.shape)
+    for ii, mask in enumerate(masks):
+        y_hat_encoded[mask] = ii
+
+    return y_encoded, y_hat_encoded
 
 
 def accuracy_score_(y, y_hat):
@@ -86,16 +96,22 @@ def accuracy_score_(y, y_hat):
             FP: False Positive
             FN: True Negative
     """
-    check_type(y, y_hat)
-    check_shape(y, y_hat)
-    check_samples(y, y_hat)
-
-    tp = Classif_utils._true_positive_(y, y_hat)
-    tn = Classif_utils._true_negative_(y, y_hat)
-    fp = Classif_utils._false_positive_(y, y_hat)
-    fn = Classif_utils._false_negative_(y, y_hat)
-    accuracy = (tp + tn) / (fp + fn)
-    pass
+    try:
+        check_type(y, y_hat)
+        check_shape(y, y_hat)
+        check_samples(y, y_hat)
+        if y.dtype.kind == 'U': # testing if kind is unicode (string)
+            y_, y_hat_ = labelencode(y, y_hat)
+        else:
+            y_, y_hat_ = y, y_hat
+        tp = Classif_utils._true_positive_(y_, y_hat_)
+        tn = Classif_utils._true_negative_(y_, y_hat_)
+        fp = Classif_utils._false_positive_(y_, y_hat_)
+        fn = Classif_utils._false_negative_(y_, y_hat_)
+        accuracy = (tp + tn) / (fp + fn)
+        return accuracy
+    except:
+        return None
 
 
 def precision_score_(y, y_hat, pos_label=1):
@@ -111,14 +127,16 @@ def precision_score_(y, y_hat, pos_label=1):
     Raises:
         This function should not raise any Exception.
     """
-    check_type(y, y_hat)
-    check_shape(y, y_hat)
-    check_samples(y, y_hat)
-
-    tp = Classif_utils._true_positive_(y, y_hat)
-    fp = Classif_utils._false_positive_(y, y_hat)
-    precision = tp / (tp + fp)
-    pass
+    try:
+        check_type(y, y_hat)
+        check_shape(y, y_hat)
+        check_samples(y, y_hat)
+        tp = Classif_utils._true_positive_(y, y_hat)
+        fp = Classif_utils._false_positive_(y, y_hat)
+        precision = tp / (tp + fp)
+        return precision
+    except:
+        return None
 
 
 def recall_score_(y, y_hat, pos_label=1):
@@ -134,13 +152,16 @@ def recall_score_(y, y_hat, pos_label=1):
     Raises:
         This function should not raise any Exception.
     """
-    check_type(y, y_hat)
-    check_shape(y, y_hat)
-    check_samples(y, y_hat)
-    tp = Classif_utils._true_positive_(y, y_hat)
-    fn = Classif_utils._false_negative_(y, y_hat)
-    recall = tp / (tp + fn)
-    pass
+    try:
+        check_type(y, y_hat)
+        check_shape(y, y_hat)
+        check_samples(y, y_hat)
+        tp = Classif_utils._true_positive_(y, y_hat)
+        fn = Classif_utils._false_negative_(y, y_hat)
+        recall = tp / (tp + fn)
+        return recall
+    except:
+        return None
 
 
 def f1_score_(y, y_hat, pos_label=1):
@@ -156,16 +177,17 @@ def f1_score_(y, y_hat, pos_label=1):
     Raises:
         This function should not raise any Exception.
     """
-    check_type(y, y_hat)
-    check_shape(y, y_hat)
-    check_samples(y, y_hat)
-
-    tp = Classif_utils._true_positive_(y, y_hat)
-    fp = Classif_utils._false_positive_(y, y_hat)
-    fn = Classif_utils._false_negative_(y, y_hat)
-
-    f1 = 2 * tp / (2 * tp + fn + fp)
-    pass
+    try:
+        check_type(y, y_hat)
+        check_shape(y, y_hat)
+        check_samples(y, y_hat)
+        tp = Classif_utils._true_positive_(y, y_hat)
+        fp = Classif_utils._false_positive_(y, y_hat)
+        fn = Classif_utils._false_negative_(y, y_hat)
+        f1 = 2 * tp / (2 * tp + fn + fp)
+        return f1
+    except:
+        return None
 
 
 if __name__ == "__main__":
