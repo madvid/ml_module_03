@@ -1,4 +1,8 @@
+import sys
 import numpy as np
+
+inf_lim = -600
+sup_lim = 256
 
 class MyLogisticRegression():
     """
@@ -66,25 +70,25 @@ class MyLogisticRegression():
         Raises:
             This function should not raise any Exception.
         """
-        #try:
-        if (not isinstance(x, np.ndarray)):
-            s = "x is not of the expected type (numpy array)."
-            print(s, file=sys.stderr)
-            return None
+        try:
+            if (not isinstance(x, np.ndarray)):
+                s = "x is not of the expected type (numpy array)."
+                print(s, file=sys.stderr)
+                return None
 
         # Checking the shape of x and y
-        if x.ndim != 2 or \
-                (x.shape[1] + 1 != self.theta.shape[0]):
-            s = "x is not 2 dimensional array " \
-                + "or mismatching shape between x and self.theta"
-            print(s, file=sys.stderr)
-            return None
+            if x.ndim != 2 or \
+                    (x.shape[1] + 1 != self.theta.shape[0]):
+                s = "x is not 2 dimensional array " \
+                    + "or mismatching shape between x and self.theta"
+                print(s, file=sys.stderr)
+                return None
 
-        x_ = np.hstack((np.ones((x.shape[0], 1)), x))
-        ypred = self._sigmoid_(np.dot(x_, self.theta) )
-        return ypred
-        #except:
-        #    return None
+            x_ = np.hstack((np.ones((x.shape[0], 1)), x))
+            ypred = self._sigmoid_(np.dot(x_, self.theta) )
+            return ypred
+        except:
+            return None
 
     def _gradient_(self, x, y):
         """ Private function gradient, there is no test performed on the
@@ -97,7 +101,7 @@ class MyLogisticRegression():
             The gradient as a numpy.array, a vector of shape n * 1,
         """
         xp = np.hstack((np.ones((x.shape[0], 1)), x))
-        return xp.T @ (xp @ self.thetas- y) / x.shape[0]
+        return xp.T @ (xp @ self.theta- y) / x.shape[0]
 
     def gradient(self, x, y):
         """Computes a gradient vector from three non-empty numpy.array,
@@ -159,6 +163,8 @@ class MyLogisticRegression():
             # Checking x, y and theta are numpy array
             if (not isinstance(x, np.ndarray)) \
                 or (not isinstance(y, np.ndarray)):
+                s = "Unexpected type for one of the array."
+                print(s, file=sys.stderr)
                 return None
 
             # Checking the shape of x and y
