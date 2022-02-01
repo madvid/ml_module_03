@@ -3,7 +3,7 @@ import os
 import pandas as pd
 import numpy as np
 
-path = os.path.join(os.path.dirname(__file__), '..', 'ex07')
+path = os.path.join(os.path.dirname(__file__), '..', 'ex06')
 sys.path.insert(1, path)
 from my_logistic_regression import MyLogisticRegression as MyLogR
 
@@ -41,24 +41,29 @@ def labelbinarizer(y, target):
     y_[np.where(y == target)] = 1
     return y_
 
+def binarize(y, threshold):
+    y_ = np.zeros(y.shape)
+    y_[y >= threshold] = 1
+    return y_
+
 # ########################################################################## #
 #  ________________________________ MAIN ___________________________________ #
 # ########################################################################## #
 
 if __name__ == "__main__":
     # Parsing the arguments:
-    parameters = sys.argv()
-    if len(parameters == 1):
+    parameters = sys.argv
+    if len(parameters) == 1:
         usage()
         sys.exit()
 
-    if len(parameters != 2):
+    if len(parameters) != 2:
         s = "Only `-zipcode=x` is exptected."
         print(s, sys.stderr)
         sys.exit()
 
-    split = parameters.split('=')
-    if len(split != 2) or (split[0] != '-zipcode') or (split[1] not in s_nb):
+    split = parameters[1].split('=')
+    if (len(split) != 2) or (split[0] != '-zipcode') or (split[1] not in s_nb):
         s = 'Wrong parameters.'
         print(s, file=sys.stderr)
         sys.exit()
@@ -87,7 +92,7 @@ if __name__ == "__main__":
         print(s, file=sys.stderr)
         sys.exit()
     
-    y_ = labelbinarizer(y)
+    y_ = labelbinarizer(y, target)
     
     x_train, x_test, y_train, y_test = data_spliter(x.values, y_, 0.2)
     
@@ -96,11 +101,13 @@ if __name__ == "__main__":
     scaler_x.fit(x_train)
     scaler_y.fit(y_train)
     x_train_tr = scaler_x.transform(x_train)
-    y_train_tr = scaler_y.transform(y_train)
     x_test_tr = scaler_x.transform(x_test)
-    y_test_tr = scaler_y.transform(y_test)
 
-    monolr = MyLogR(np.random.rand(x.shape[1], 1), alpha=1e-2, max_iter=10000)
-    monolr.fit(x_train_tr, y_train_tr)
+    monolr = MyLogR(np.random.rand(x.shape[1] + 1, 1), alpha=1e-2, max_iter=10000)
+    monolr.fit_(x_train_tr, y_train)
 
+    pred = monolr.predict_(x_test_tr)
+    bin_pred = binarize(pred, threshold=0.5)
 
+    correct_pred = (bin_pred == y_test)
+    print(correct_pred.sum())
