@@ -89,7 +89,7 @@ def accuracy_score_(y, y_hat):
     Raises:
         This function should not raise any Exception.
     Reminder:
-        accuracy = (TP + TN) / (TP + TF + FP + FN)
+        accuracy = (TP + TN) / (TP + TN + FP + FN)
         with:
             TP: True Positive
             TN: True Negative
