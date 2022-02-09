@@ -188,6 +188,126 @@ def f1_score_(y, y_hat, pos_label=1):
         return f1
     except:
         return None
+# ########################################################################## #
+#  COPY FROM DSLR metrics class
+# ########################################################################## #
+def accuracy_score_(y:np.ndarray, yhat:np.ndarray, pos_label=1):
+		"""
+		...Docstring...
+		"""
+		if yhat.ndim != 2:
+			str_err = "Incorrect dimension for yhat."
+			raise Exception(str_err)
+		if y.ndim != 2:
+			str_err = "Incorrect dimension for y."
+			raise Exception(str_err)
+		if yhat.shape != y.shape:
+			str_err = "Mismatching shape between yhat and y."
+			raise Exception(str_err)
+		tp_arr = (y == pos_label) & (yhat == pos_label)
+		fp_arr = (y != pos_label) & (yhat == pos_label)
+		tn_arr = (y != pos_label) & (yhat != pos_label)
+		fn_arr = (y == pos_label) & (yhat != pos_label)
+		tp = tp_arr.sum()
+		fp = fp_arr.sum()
+		tn = tn_arr.sum()
+		fn = fn_arr.sum()
+		if (tp == 0) & (fp == 0) & (tn == 0) & (fn == 0):
+			accuracy = 0
+		else:
+			accuracy = (tp + tn) / (tp + tn + fp + fn + eps)
+		return round(accuracy, 4)
+
+def precision_score_(y:np.ndarray, yhat:np.ndarray, pos_label=1):
+    """
+    ...Docstring...
+    """
+    if yhat.ndim != 2:
+        str_err = "Incorrect dimension for yhat."
+        raise Exception(str_err)
+    if y.ndim != 2:
+        str_err = "Incorrect dimension for y."
+        raise Exception(str_err)
+    if yhat.shape != y.shape:
+        str_err = "Mismatching shape between yhat and y."
+        raise Exception(str_err)
+    if pos_label not in np.unique(y):
+        str_err = f"{pos_label} is not a possible value of y"
+        raise Exception(str_err)
+    tp_arr = (y == pos_label) & (yhat == pos_label)
+    fp_arr = (y != pos_label) & (yhat == pos_label)
+    tp = tp_arr.sum()
+    fp = fp_arr.sum()
+    precision = tp / (tp + fp + eps)
+    return round(precision, 4)
+
+def recall_score_(y:np.ndarray, yhat:np.ndarray, pos_label=1):
+    """
+    ...Docstring...
+    """
+    if yhat.ndim != 2:
+        str_err = "Incorrect dimension for yhat."
+        raise Exception(str_err)
+    if y.ndim != 2:
+        str_err = "Incorrect dimension for y."
+        raise Exception(str_err)
+    if yhat.shape != y.shape:
+        str_err = "Mismatching shape between yhat and y."
+        raise Exception(str_err)
+    if pos_label not in np.unique(y):
+        str_err = f"{pos_label} is not a possible value of y"
+        raise Exception(str_err)
+    tp_arr = (y == pos_label) & (yhat == pos_label)
+    fn_arr = (y == pos_label) & (yhat != pos_label)
+    tp = tp_arr.sum()
+    fn = fn_arr.sum()
+    recall = tp / (tp + fn + eps)
+    return round(recall, 4)
+
+def specificity_score_(y:np.ndarray, yhat:np.ndarray, pos_label=1):
+    """
+    ...Docstring...
+    """
+    if yhat.ndim != 2:
+        str_err = "Incorrect dimension for yhat."
+        raise Exception(str_err)
+    if y.ndim != 2:
+        str_err = "Incorrect dimension for y."
+        raise Exception(str_err)
+    if yhat.shape != y.shape:
+        str_err = "Mismatching shape between yhat and y."
+        raise Exception(str_err)
+    tp_arr = (y == pos_label) & (yhat == pos_label)
+    fp_arr = (y != pos_label) & (yhat == pos_label)
+    tn_arr = (y != pos_label) & (yhat != pos_label)
+    fn_arr = (y == pos_label) & (yhat != pos_label)
+
+    tp = tp_arr.sum()
+    fp = fp_arr.sum()
+    tn = tn_arr.sum()
+    fn = fn_arr.sum()
+    specificity = tn / (tn + fp + eps)
+    return round(specificity, 4)
+
+def f1_score_(y:np.ndarray, yhat:np.ndarray, pos_label=1):
+    """
+    ...Docstring...
+    """
+    if yhat.ndim != 2:
+        str_err = "Incorrect dimension for yhat."
+        raise Exception(str_err)
+    if y.ndim != 2:
+        str_err = "Incorrect dimension for y."
+        raise Exception(str_err)
+    if yhat.shape != y.shape:
+        str_err = "Mismatching shape between yhat and y."
+        raise Exception(str_err)
+    precision = MyLogisticMetrics.precision_score_(y, yhat, pos_label)
+    recall = MyLogisticMetrics.recall_score_(y, yhat, pos_label)
+    f1 = 2 * precision * recall / (precision + recall + eps)
+    return round(f1, 4)
+
+# ########################################################################## #
 
 
 if __name__ == "__main__":
