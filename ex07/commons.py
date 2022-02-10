@@ -7,6 +7,8 @@ PREC = 4
 # ########################################################################## #
 #  ______________________________ FUNCTIONS ________________________________ #
 # ########################################################################## #
+
+
 def _check_type_(y, ypred):
     """ Checking y and ypred are both numpy ndarray objects
     """
@@ -21,6 +23,7 @@ def _check_type_(y, ypred):
         s = "Unmatching data type."
         print(s, file=sys.stderr)
         sys.exit()
+
 
 def _check_shape_(y, ypred):
     """ Checking y and ypred are both of the same shape
@@ -40,6 +43,7 @@ def _check_shape_(y, ypred):
         print(s, file=sys.stderr)
         sys.exit()
 
+
 def _check_samples_(y, ypred):
     """ Checking the set of values of ypred respectively to y.
     (ie all the value in ypred must appear in y otherwise there is a problem)
@@ -51,7 +55,8 @@ def _check_samples_(y, ypred):
         print(s, file=sys.stderr)
         sys.exit()
 
-def accuracy_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
+
+def accuracy_score_(y: np.ndarray, ypred: np.ndarray, pos_label: int = 1):
     """
     Compute the accuracy score.
     Args:
@@ -87,7 +92,8 @@ def accuracy_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
         accuracy = (tp + tn) / (tp + tn + fp + fn + eps)
     return round(accuracy, PREC)
 
-def precision_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
+
+def precision_score_(y: np.ndarray, ypred: np.ndarray, pos_label: int = 1):
     """
     Compute the accuracy score.
     Args:
@@ -116,7 +122,8 @@ def precision_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
     precision = tp / (tp + fp + eps)
     return round(precision, PREC)
 
-def recall_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
+
+def recall_score_(y: np.ndarray, ypred: np.ndarray, pos_label: int = 1):
     """
     Compute the recall score.
     Args:
@@ -145,7 +152,8 @@ def recall_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
     recall = tp / (tp + fn + eps)
     return round(recall, PREC)
 
-def specificity_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
+
+def specificity_score_(y: np.ndarray, ypred: np.ndarray, pos_label: int = 1):
     """
     Compute the specificity score.
     Args:
@@ -176,13 +184,14 @@ def specificity_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
     specificity = tn / (tn + fp + eps)
     return round(specificity, PREC)
 
-def f1_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
+
+def f1_score_(y: np.ndarray, ypred: np.ndarray, pos_label: int = 1):
     """
     Compute the f1 score.
     Args:
-        y:a numpy.array for the correct labels
-        y_hat:a numpy.array for the predicted labels
-        pos_label: str or int, the class on which to report the f1_score (default=1)
+        y:a [numpy.array] for the correct labels
+        y_hat: [numpy.array] for the predicted labels
+        pos_label: [str, int], class on which f1_score is reported (default=1)
     Return:
         The f1 score as a float.
         None on any error.
@@ -197,7 +206,8 @@ def f1_score_(y:np.ndarray, ypred:np.ndarray, pos_label=1):
     f1 = 2 * precision * recall / (precision + recall + eps)
     return round(f1, PREC)
 
-def metrics_report(y:np.ndarray, ypred:np.ndarray):
+
+def metrics_report(y: np.ndarray, ypred: np.ndarray):
     """ Displays the accuracy/recall/precision/f1 scores
     """
     accuracy = accuracy_score_(y, ypred)

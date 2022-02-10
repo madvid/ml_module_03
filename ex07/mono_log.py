@@ -24,17 +24,23 @@ from constants import *
 # ########################################################################## #
 #  ______________________________ FUNCTIONS ________________________________ #
 # ########################################################################## #
+
+
 from commons import *
+
+
 # >>> Usage <<<
 def usage():
     s = "usgage: python mono_log.py -zipcode=0/1/2/3"
     print(s)
+
 
 # >>> Preprocessing related methods <<<
 def labelbinarizer(y, target):
     y_ = np.zeros(y.shape, dtype='int8')
     y_[np.where(y == target)] = 1
     return y_
+
 
 def binarize(y, threshold=0.0, copy=True):
     """Cheap mimic of the binarize method from sklearn.preprocessing module
@@ -49,6 +55,7 @@ def binarize(y, threshold=0.0, copy=True):
 # ########################################################################## #
 #  ________________________________ MAIN ___________________________________ #
 # ########################################################################## #
+
 
 if __name__ == "__main__":
     # Parsing the arguments:
@@ -67,9 +74,9 @@ if __name__ == "__main__":
         s = 'Wrong parameters.'
         print(s, file=sys.stderr)
         sys.exit()
-    
+
     target = int(split[1])
-    
+
     # Importing data:
     try:
         x = pd.read_csv(file_x, index_col=0)
@@ -78,7 +85,7 @@ if __name__ == "__main__":
         s = "Issue while reading one of the dataset."
         print(s, file=sys.stderr)
         sys.exit()
- 
+
     try:
         # casting the y data
         # 2 reasons: minimizing the memory space
@@ -107,7 +114,7 @@ if __name__ == "__main__":
     x_test_tr = scaler_x.transform(x_test)
 
     # Instanciation and training of the model
-    monolr = MyLogR(np.random.rand(x.shape[1] + 1, 1), alpha=1e-2, max_iter=10000)
+    monolr = MyLogR(np.random.rand(x.shape[1] + 1, 1), 1e-2, 10000)
     monolr.fit_(x_train_tr, y_train)
 
     # Prediction and binarization of the probabilities
@@ -116,7 +123,8 @@ if __name__ == "__main__":
 
     # Calcul of the fraction of correct prediction
     correct_pred = np.sum(binarize_pred == y_test) / y_test.shape[0]
-    print(f"Fraction of the corrected prediction on test set (accuracy):{correct_pred:.4f}")
+    s = f"Fraction of the corrected prediction on test set (accuracy): "
+    print(s, f'{correct_pred:.4f}')
 
     # Basic classification metrics (accuracy, recall, precision and f1 scores)
     # Not asked by the subject.
@@ -124,19 +132,19 @@ if __name__ == "__main__":
 
     # Plotting of the data and the predictions
     fig, axes = plt.subplots(1, 3, figsize=(20, 6))
-    axes[0].scatter(x_test[:,0], y_test, s=24, label='true value')
-    axes[0].scatter(x_test[:,0], binarize_pred, s=12, label='prediction')
-    axes[1].scatter(x_test[:,1], y_test, s=24, label='true value')
-    axes[1].scatter(x_test[:,1], binarize_pred, s=12, label='prediction')
-    axes[2].scatter(x_test[:,2], y_test, s=24, label='true value')
-    axes[2].scatter(x_test[:,2], binarize_pred, s=12, label='prediction')
+    axes[0].scatter(x_test[:, 0], y_test, s=24, label='true value')
+    axes[0].scatter(x_test[:, 0], binarize_pred, s=12, label='prediction')
+    axes[1].scatter(x_test[:, 1], y_test, s=24, label='true value')
+    axes[1].scatter(x_test[:, 1], binarize_pred, s=12, label='prediction')
+    axes[2].scatter(x_test[:, 2], y_test, s=24, label='true value')
+    axes[2].scatter(x_test[:, 2], binarize_pred, s=12, label='prediction')
 
-    citizen  = list(dct_labels.keys())[target]
+    citizen = list(dct_labels.keys())[target]
     axes[0].set_ylabel("citizen of " + citizen)
     axes[0].set_xlabel(x.columns[0])
     axes[1].set_xlabel(x.columns[1])
     axes[2].set_xlabel(x.columns[2])
 
     axes[0].legend(), axes[1].legend(), axes[2].legend()
-    axes[0].grid(), axes[1].grid(),axes[2].grid()
+    axes[0].grid(), axes[1].grid(), axes[2].grid()
     plt.show()
