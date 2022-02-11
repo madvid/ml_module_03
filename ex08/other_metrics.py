@@ -1,3 +1,15 @@
+# ########################################################################## #
+# Note:
+#   The subject specifically ask that no exception must be raisen.
+#     But if anyone would like to raise exceptions, some functions have
+#     several commented lines for this purpose. One should only remove
+#     try /except, uncomment the concerned lines and reindent proprely.
+#   Also beware there is some function which are not implemented in this way
+#     for instance check_type, where a call to sys.exit() is performed instead
+#     of rising an exception. This is only a inconsistency philosphy developping
+#     it was a different day and i felt like it.
+# ########################################################################## #
+
 import sys
 import numpy as np
 from sklearn.metrics import accuracy_score, \
@@ -60,10 +72,26 @@ def check_samples(y, y_hat):
         sys.exit()
 
 
-def labelencode(y, y_hat):
-    """
+def labelencode(y: np.ndarray, y_hat: np.ndarray):
+    """ Encoded the target vector and the predicted target vectors.
+    Args:
+        y    : [np.ndarray] target vector
+        y_hat: [np.ndarray] predicted target vector.
+    Return:
+
+    Remark(s):
+        np.unique(.., return_inverse=True) allows to get the encoding of y
+            directly. According to numpy doc, we know it is the indices to
+            reconstruct the original array using set of unique values:
+            Example:
+            y  = array(['Y', 'M', 'C', 'A', 'A', 'M', 'Y'])
+            uni, y_encoded = np.unique(y, return_inverse=True)
+            uni = ['Y', 'M', 'C', 'A']
+            y_encoded = [0,   1,   2,   3,   3,   1,   0]
     """
     u, y_encoded = np.unique(y, return_inverse=True)
+    # Thanks to return_inverse, we get the encoded y direclty as it is an array
+    # containing the indexes of the unique set:
     masks = [np.where(y_hat == label) for label in u]
     y_hat_encoded = np.zeros(y_encoded.shape)
     for ii, mask in enumerate(masks):
@@ -86,10 +114,8 @@ def accuracy_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Reminder:
         accuracy = (TP + TN) / (TP + TN + FP + FN)
         with:
-            TP: True Positive
-            TN: True Negative
-            FP: False Positive
-            FN: True Negative
+            TP: True Positive     TN: True Negative
+            FP: False Positive    FN: True Negative
     """
     if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
@@ -129,10 +155,8 @@ def precision_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Reminder:
         accuracy = (TP + TN) / (TP + TN + FP + FN)
         with:
-            TP: True Positive
-            TN: True Negative
-            FP: False Positive
-            FN: True Negative
+            TP: True Positive      TN: True Negative
+            FP: False Positive     FN: False Negative
     """
     if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
@@ -168,10 +192,8 @@ def recall_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Reminder:
         recall = TP / (TP + FN)
         with:
-            TP: True Positive
-            TN: True Negative
-            FP: False Positive
-            FN: False Negative
+            TP: True Positive     TN: True Negative
+            FP: False Positive    FN: False Negative
     """
     if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
@@ -207,10 +229,8 @@ def specificity_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Reminder:
         specificity = TN / (TN + FP)
         with:
-            TP: True Positive
-            TN: True Negative
-            FP: False Positive
-            FN: True Negative
+            TP: True Positive     TN: True Negative
+            FP: False Positive    FN: False Negative
     """
     if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
@@ -241,19 +261,19 @@ def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
         pos_label: [str, int], class on which f1_score is reported (default=1)
     Return:
         The f1 score as a float.
-        None on any error.
+        None if any error.
     Raises:
         This function should not raise any Exception.
     """
-    if yhat.ndim > 2:
-        str_err = "Incorrect dimension for yhat."
-        raise Exception(str_err)
-    if y.ndim > 2:
-        str_err = "Incorrect dimension for y."
-        raise Exception(str_err)
-    if yhat.shape != y.shape:
-        str_err = "Mismatching shape between yhat and y."
-        raise Exception(str_err)
+    # if yhat.ndim > 2:
+        # str_err = "Incorrect dimension for yhat."
+        # raise Exception(str_err)
+    # if y.ndim > 2:
+        # str_err = "Incorrect dimension for y."
+        # raise Exception(str_err)
+    # if yhat.shape != y.shape:
+        # str_err = "Mismatching shape between yhat and y."
+        # raise Exception(str_err)
     precision = precision_score_(y, yhat, pos_label)
     recall = recall_score_(y, yhat, pos_label)
     f1 = 2 * precision * recall / (precision + recall + eps)
