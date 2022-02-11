@@ -91,10 +91,10 @@ def accuracy_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
             FP: False Positive
             FN: True Negative
     """
-    if yhat.ndim != 2:
+    if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
         raise Exception(str_err)
-    if y.ndim != 2:
+    if y.ndim > 2:
         str_err = "Incorrect dimension for y."
         raise Exception(str_err)
     if yhat.shape != y.shape:
@@ -112,7 +112,7 @@ def accuracy_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
         accuracy = 0
     else:
         accuracy = (tp + tn) / (tp + tn + fp + fn + eps)
-    return round(accuracy, 4)
+    return accuracy
 
 
 def precision_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
@@ -134,10 +134,10 @@ def precision_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
             FP: False Positive
             FN: True Negative
     """
-    if yhat.ndim != 2:
+    if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
         raise Exception(str_err)
-    if y.ndim != 2:
+    if y.ndim > 2:
         str_err = "Incorrect dimension for y."
         raise Exception(str_err)
     if yhat.shape != y.shape:
@@ -151,7 +151,7 @@ def precision_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     tp = tp_arr.sum()
     fp = fp_arr.sum()
     precision = tp / (tp + fp + eps)
-    return round(precision, 4)
+    return precision
 
 
 def recall_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
@@ -173,10 +173,10 @@ def recall_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
             FP: False Positive
             FN: False Negative
     """
-    if yhat.ndim != 2:
+    if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
         raise Exception(str_err)
-    if y.ndim != 2:
+    if y.ndim > 2:
         str_err = "Incorrect dimension for y."
         raise Exception(str_err)
     if yhat.shape != y.shape:
@@ -190,7 +190,7 @@ def recall_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     tp = tp_arr.sum()
     fn = fn_arr.sum()
     recall = tp / (tp + fn + eps)
-    return round(recall, 4)
+    return recall
 
 
 def specificity_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
@@ -212,10 +212,10 @@ def specificity_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
             FP: False Positive
             FN: True Negative
     """
-    if yhat.ndim != 2:
+    if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
         raise Exception(str_err)
-    if y.ndim != 2:
+    if y.ndim > 2:
         str_err = "Incorrect dimension for y."
         raise Exception(str_err)
     if yhat.shape != y.shape:
@@ -226,12 +226,10 @@ def specificity_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     tn_arr = (y != pos_label) & (yhat != pos_label)
     fn_arr = (y == pos_label) & (yhat != pos_label)
 
-    tp = tp_arr.sum()
     fp = fp_arr.sum()
     tn = tn_arr.sum()
-    fn = fn_arr.sum()
     specificity = tn / (tn + fp + eps)
-    return round(specificity, 4)
+    return specificity
 
 
 def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
@@ -247,10 +245,10 @@ def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Raises:
         This function should not raise any Exception.
     """
-    if yhat.ndim != 2:
+    if yhat.ndim > 2:
         str_err = "Incorrect dimension for yhat."
         raise Exception(str_err)
-    if y.ndim != 2:
+    if y.ndim > 2:
         str_err = "Incorrect dimension for y."
         raise Exception(str_err)
     if yhat.shape != y.shape:
@@ -259,7 +257,7 @@ def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     precision = precision_score_(y, yhat, pos_label)
     recall = recall_score_(y, yhat, pos_label)
     f1 = 2 * precision * recall / (precision + recall + eps)
-    return round(f1, 4)
+    return f1
 
 # ########################################################################## #
 #  ________________________________ MAIN ___________________________________ #
@@ -303,22 +301,22 @@ if __name__ == "__main__":
     print('expected f1-score:'.ljust(25), expected)
 
     print("# Example 2:")
-    y_hat = np.array([['norminet',
+    y_hat = np.array(['norminet',
                       'dog',
                       'norminet',
                       'norminet',
                       'dog',
                       'dog',
                       'dog',
-                      'dog']])
-    y = np.array([['dog',
+                      'dog'])
+    y = np.array(['dog',
                   'dog',
                   'norminet',
                   'norminet',
                   'dog',
                   'norminet',
                   'dog',
-                  'norminet']])
+                  'norminet'])
     # Accuracy
     # your implementation
     # res = accuracy_score_(y, y_hat)
