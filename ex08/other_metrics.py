@@ -17,10 +17,6 @@ from sklearn.metrics import accuracy_score, \
                             recall_score, \
                             f1_score
 
-# ########################################################################## #
-#  _____________________________ CONSTANTES ________________________________ #
-# ########################################################################## #
-eps = 1e-6
 
 # ########################################################################## #
 #  ______________________________ FUNCTIONS ________________________________ #
@@ -166,9 +162,9 @@ def accuracy_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     tn = tn_arr.sum()
     fn = fn_arr.sum()
     if (tp == 0) & (fp == 0) & (tn == 0) & (fn == 0):
-        accuracy = 0
+        accuracy = 0.0
     else:
-        accuracy = (tp + tn) / (tp + tn + fp + fn + eps)
+        accuracy = (tp + tn) / (tp + tn + fp + fn)
     return accuracy
 
 
@@ -205,7 +201,10 @@ def precision_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     fp_arr = (y != pos_label) & (yhat == pos_label)
     tp = tp_arr.sum()
     fp = fp_arr.sum()
-    precision = tp / (tp + fp + eps)
+    if (tp == 0) & (fp == 0):
+        precision = 0.0
+    else:
+        precision = tp / (tp + fp)
     return precision
 
 
@@ -242,7 +241,10 @@ def recall_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     fn_arr = (y == pos_label) & (yhat != pos_label)
     tp = tp_arr.sum()
     fn = fn_arr.sum()
-    recall = tp / (tp + fn + eps)
+    if (tp == 0) & (fn == 0):
+        recall = 0.0
+    else:
+        recall = tp / (tp + fn)
     return recall
 
 
@@ -279,7 +281,10 @@ def specificity_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
 
     fp = fp_arr.sum()
     tn = tn_arr.sum()
-    specificity = tn / (tn + fp + eps)
+    if (fp == 0) & (tn == 0):
+        specificity = 0.0
+    else:
+        specificity = tn / (tn + fp)
     return specificity
 
 
@@ -307,7 +312,10 @@ def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
         raise Exception(str_err)
     precision = precision_score_(y, yhat, pos_label)
     recall = recall_score_(y, yhat, pos_label)
-    f1 = 2 * precision * recall / (precision + recall + eps)
+    if (precision == 0) & (recall == 0):
+        f1 = 0.0
+    else:
+        f1 = 2 * precision * recall / (precision + recall)
     return f1
 
 # ########################################################################## #
