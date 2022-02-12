@@ -27,8 +27,17 @@ eps = 1e-6
 # ########################################################################## #
 
 
-def check_type(y, y_hat):
-    """
+def check_type(y: np.ndarray, y_hat: np.ndarray):
+    """ Checking the type of y and y_hat and the data_type of the target
+    vector and predicted vector.
+    Args:
+        y    : [np.ndarray] target vector
+        y_hat: [np.ndarray] predicted target vector.
+    Return:
+        None
+    Remark:
+        The function will print an error message and quit the program if
+        there is any issue.
     """
     # Checking type
     if (not isinstance(y, np.ndarray)) \
@@ -43,8 +52,18 @@ def check_type(y, y_hat):
         sys.exit()
 
 
-def check_shape(y, y_hat):
-    """
+def check_shape(y: np.ndarray, y_hat: np.ndarray):
+    """ Checking the shape of the target and prediction vectors.
+    If the shape are different, a error message is printed on stderr
+    and the program is stopped.
+    Args:
+        y    : [np.ndarray] target vector
+        y_hat: [np.ndarray] predicted target vector.
+    Return:
+        None
+    Remark:
+        The function will print an error message and quit the program if
+        there is any issue.
     """
     # Checking shape along axis 0
     if y.shape[0] != y_hat.shape[0]:
@@ -60,8 +79,19 @@ def check_shape(y, y_hat):
         sys.exit()
 
 
-def check_samples(y, y_hat):
-    """
+def check_samples(y:np.ndarray, y_hat: np.ndarray):
+    """ Checking if each unique values of y_hat is not a new value and
+    exists in the target vector y.
+    If the shape are different, a error message is printed on stderr
+    and the program is stopped.
+    Args:
+        y    : [np.ndarray] target vector
+        y_hat: [np.ndarray] predicted target vector.
+    Return:
+        None
+    Remark:
+        The function will print an error message and quit the program if
+        there is any issue.
     """
     set_y = np.unique(y)
     set_y_hat = np.unique(y_hat)
@@ -78,7 +108,8 @@ def labelencode(y: np.ndarray, y_hat: np.ndarray):
         y    : [np.ndarray] target vector
         y_hat: [np.ndarray] predicted target vector.
     Return:
-
+        y_encoded    : [np.ndarray] encoded target vector.
+        y_hat_encoded: [np.ndarray] encoded prediction vector.
     Remark(s):
         np.unique(.., return_inverse=True) allows to get the encoding of y
             directly. According to numpy doc, we know it is the indices to
@@ -265,15 +296,15 @@ def f1_score_(y: np.ndarray, yhat: np.ndarray, pos_label=1):
     Raises:
         This function should not raise any Exception.
     """
-    # if yhat.ndim > 2:
-        # str_err = "Incorrect dimension for yhat."
-        # raise Exception(str_err)
-    # if y.ndim > 2:
-        # str_err = "Incorrect dimension for y."
-        # raise Exception(str_err)
-    # if yhat.shape != y.shape:
-        # str_err = "Mismatching shape between yhat and y."
-        # raise Exception(str_err)
+    if yhat.ndim > 2:
+        str_err = "Incorrect dimension for yhat."
+        raise Exception(str_err)
+    if y.ndim > 2:
+        str_err = "Incorrect dimension for y."
+        raise Exception(str_err)
+    if yhat.shape != y.shape:
+        str_err = "Mismatching shape between yhat and y."
+        raise Exception(str_err)
     precision = precision_score_(y, yhat, pos_label)
     recall = recall_score_(y, yhat, pos_label)
     f1 = 2 * precision * recall / (precision + recall + eps)
