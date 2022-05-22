@@ -52,9 +52,9 @@ class MyLogisticRegression():
         """
         try:
             x_ = np.array(x, copy=True)
-            x_[x_ < inf_lim] = inf_lim
-            x_[x_ > sup_lim] = sup_lim
-            return np.divide(1., 1. + np.exp(-x))
+            #x_[x_ < inf_lim] = inf_lim
+            #x_[x_ > sup_lim] = sup_lim
+            return np.divide(1., 1. + np.exp(-x_))
         except:
             return None
 
@@ -101,7 +101,7 @@ class MyLogisticRegression():
             The gradient as a numpy.array, a vector of shape n * 1,
         """
         xp = np.hstack((np.ones((x.shape[0], 1)), x))
-        return xp.T @ (xp @ self.theta- y) / x.shape[0]
+        return xp.T @ (self._sigmoid_(xp @ self.theta) - y) / x.shape[0]
 
     def gradient(self, x, y):
         """Computes a gradient vector from three non-empty numpy.array,
@@ -178,7 +178,7 @@ class MyLogisticRegression():
                 return None
             
             # Performing the gradient descent
-            for _ in range(self.max_iter):
+            for i in range(self.max_iter):
                 grad = self._gradient_(x, y)
                 self.theta = self.theta - self.alpha * grad
             return self
@@ -216,7 +216,7 @@ class MyLogisticRegression():
                 print(s, file=sys.stderr)
                 return None
 
-            eps = 1e-30
+            eps = 1e-15
             yhat = self.predict_(x)
             #log_loss = y * np.log(yhat + eps) + (1 - y) * np.log(1 - yhat + eps)
             log_loss = self._loss_elem_(y, yhat)
@@ -273,9 +273,9 @@ class MyLogisticRegression():
             This function should not raise any Exception.
         """
         try:
-            eps = 1e-30
+            eps = 1e-15
             log_loss = y * np.log(y_hat + eps) + (1 - y) * np.log(1 - y_hat + eps)
-            return log_loss
+            return -log_loss
         except:
             return None
 
